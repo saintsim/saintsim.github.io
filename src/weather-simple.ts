@@ -1,14 +1,15 @@
-class WeatherData {
-    apiData: string;
-    constructor(apiData: string) {
-        this.apiData = apiData;
-    }
-    getTemperature() {
-        const response = JSON.parse(this.apiData);
-        console.log(response);
-        return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
-    }
-}
+// class WeatherData {
+//     apiData: string;
+//     constructor(apiData: string) {
+//         this.apiData = apiData;
+//     }
+//     getTemperature() {
+//         const response = JSON.parse(this.apiData);
+//         console.log(response);
+//         return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
+//     }
+// }
+
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
     const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
@@ -26,7 +27,10 @@ function getWeatherData() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
-                    const temperature = new WeatherData(xhr.responseText).getTemperature();
+                    //const temperature = new WeatherData(xhr.responseText).getTemperature();
+                    const response = JSON.parse(xhr.responseText);
+                    console.log(response);
+                    const temperature = `Temperature: ${response.hourly.temperature_2m[0]}°C`;
                     console.log(temperature); // Log or set the temperature
                     const weatherElement = document.getElementById("weather");
                     if (weatherElement) {
