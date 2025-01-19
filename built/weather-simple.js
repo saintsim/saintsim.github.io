@@ -1,4 +1,3 @@
-"use strict";
 // class WeatherData {
 //     apiData: string;
 //     constructor(apiData: string) {
@@ -10,6 +9,62 @@
 //         return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
 //     }
 // }
+import clearSkyIcon from '../public/assets/images/icon-sun-96.png';
+import mainlyClearIcon from '../public/assets/images/icon-mainly-clear-day-96.png';
+import partlyCloudyIcon from '../public/assets/images/icon-partly-cloudy-96.png';
+import overCastIcon from '../public/assets/images/icon-cloud-64.png';
+import fogIcon from '../public/assets/images/icon-fog-96.png';
+function getWeatherImage(weatherCode) {
+    switch (weatherCode) {
+        case 0: {
+            // 0 Clear sky
+            return clearSkyIcon;
+        }
+        case 1: {
+            // 1 Mainly clear
+            return mainlyClearIcon;
+        }
+        case 2: {
+            // 2 partly cloudy
+            return partlyCloudyIcon;
+        }
+        case 3: {
+            // 3 overcast
+            return overCastIcon;
+        }
+        default: {
+            return fogIcon;
+        }
+    }
+}
+// // 0 Clear sky
+// // 1 Mainly clear
+// // 2 partly cloudy
+// // 3 overcast
+// // 45 Fog
+// // 48 depositing rime fog
+// // 51 Drizzle: Light
+// // 53 Drizzle: moderate
+// // 55 Drizzile:  dense intensity
+// // 56 Freezing Drizzle: Light
+// // 57 Freezing Drizzle: dense intensity
+// // 61 Rain: Slight
+// // 63 Rain moderate
+// // 65 Rain heavy intensity
+// // 66 Freezing Rain: Light
+// // 67 Freezing rain heavy intensity
+// // 71 Snow fall: Slight
+// // 73 Snow fall moderate
+// // 75 Snow fall heavy intensity
+// // 77 Snow grains
+// // 80 Rain showers: Slight
+// // 81 Rain showers moderate
+// // 82 Rain showers violent
+// // 85 Snow showers slight
+// // 86 Snow showers heavy
+// // 95 Thunderstorm: Slight or moderate
+// // 96 Thunderstorm with slight and heavy hail
+// // 99 *	Thunderstorm heavy hail
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
     const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
@@ -35,6 +90,9 @@ function getWeatherData() {
                 if (weatherElement) {
                     weatherElement.textContent = temperature;
                 }
+                const weatherCode = response.current_weather.weathercode;
+                const weatherIcon = getWeatherImage(weatherCode);
+                document.getElementById('amWeatherIcon').src = weatherIcon;
             }
             catch (error) {
                 console.log("Failed to parse the weather data.");
