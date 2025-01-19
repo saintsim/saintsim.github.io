@@ -36,41 +36,45 @@ true&&(function polyfill() {
   }
 }());
 
-const zeroFill = n => {
-    return ('0' + n).slice(-2);
-};
-
+const zeroFill = (n) => ('0' + n).slice(-2);
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
 function getOrdinal(n) {
-    let ord = ["st", "nd", "rd"];
-    let exceptions = [11, 12, 13];
-    let nth = ord[(n % 10) - 1] === undefined || exceptions.includes(n % 100) ? "th" : ord[(n % 10) - 1];
-    return n + nth
+    const ord = ["st", "nd", "rd"];
+    const exceptions = [11, 12, 13];
+    if (exceptions.includes(n % 100)) {
+        return n + "th";
+    }
+    const suffix = ord[(n % 10) - 1] || "th";
+    return n + suffix;
 }
-
-function updateDate()
-{
-    const now = new Date();
+function updateDate() {
+    let now = new Date();
     const currentDayOfWeek = daysOfWeek[now.getDay()];
+    const dayOfMonth = getOrdinal(now.getDate());
     const month = now.toLocaleString('default', { month: 'long' });
-    document.getElementById('date').innerHTML = currentDayOfWeek + ' ' + ' ' + getOrdinal(now.getDay()) + ' ' + month + ' ' + now.getFullYear();
+    const dateElement = document.getElementById('date');
+    if (dateElement) {
+        dateElement.innerHTML = `${currentDayOfWeek} ${dayOfMonth} ${month} ${now.getFullYear()}`;
+    }
 }
-
-function updateTime()
-{
-    // Creates interval
-    // Get current time
-    const now = new Date();
-
-    // Format date as in mm/dd/aaaa hh:ii:ss
+function updateTime() {
+    let now = new Date();
     const dateTime = zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
-
-    // Display the date and time on the screen using div#date-time
-    document.getElementById('time').innerHTML = dateTime;
+    const timeElement = document.getElementById('time');
+    if (timeElement) {
+        timeElement.innerHTML = dateTime;
+    }
 }
-
-setInterval(updateDate, 1000);
+function scheduleUpdateDate() {
+    updateDate();
+    let now = new Date();
+    const timeToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime();
+    setTimeout(() => {
+        updateDate();
+        setInterval(updateDate, 24 * 60 * 60 * 1000); // Update every 24 hours
+    }, timeToMidnight);
+}
+scheduleUpdateDate();
 setInterval(updateTime, 1000);
 
 // class WeatherData {
