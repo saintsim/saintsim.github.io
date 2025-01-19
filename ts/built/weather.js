@@ -1,4 +1,4 @@
-import { fetchWeatherApi } from 'https://cdn.jsdelivr.net/npm/openmeteo@1.1.4/+esm';
+import { fetchWeatherApi } from 'openmeteo';
 // Weather codes:
 // 0 Clear sky
 // 1 Mainly clear
