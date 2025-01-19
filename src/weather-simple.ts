@@ -3,7 +3,13 @@ function getWeatherData() {
     (document.getElementById('amWeatherIcon') as HTMLImageElement).src = cloudImage;
 
     var xhr = new XMLHttpRequest();
-    var url = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m";
+    var latitude = 35.6895; // Latitude for Tokyo
+    var longitude = 139.6917; // Longitude for Tokyo
+    var url = "https://api.open-meteo.com/v1/forecast?" +
+              "latitude=" + latitude +
+              "&longitude=" + longitude +
+              "&current_weather=true" +
+              "&hourly=temperature_2m,weathercode";
 
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function () {
