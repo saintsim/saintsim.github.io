@@ -5,11 +5,12 @@
         "allowJs": true,
         "module": "esnext",
         "target": "esnext",
-        "lib": ["esnext", "dom"],
+        "lib": ["esnext", "ES2015", "dom", "dom.iterable"],
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "types": ["vite/client"]
     },
     "include": ["./src/**/*"]
 }
