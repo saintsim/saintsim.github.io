@@ -24,8 +24,7 @@ function getWeatherData() {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
                     const temperature = new WeatherData(xhr.responseText).getTemperature();
                     console.log(temperature); // Log or set the temperature
@@ -36,9 +35,8 @@ function getWeatherData() {
                 } catch (error) {
                     console.log("Failed to parse the weather data.");
                 }
-            } else {
-                console.log("Failed to fetch weather data.");
-            }
+        } else {
+            console.log("Failed to fetch weather data.");
         }
     };
     xhr.send();
