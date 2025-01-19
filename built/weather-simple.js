@@ -1,5 +1,6 @@
-"use strict";
+import cloudImage from '../public/assets/images/icon-cloud-64.png';
 function getWeatherData() {
+    document.getElementById('amWeatherIcon').src = cloudImage;
     var xhr = new XMLHttpRequest();
     var url = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m";
     xhr.open("GET", url, true);
