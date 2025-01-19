@@ -9,7 +9,7 @@ class WeatherData {
         return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
     }
 }
-async function getWeatherData() {
+function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
     const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
     const url = "https://api.open-meteo.com/v1/forecast?" +
@@ -20,17 +20,17 @@ async function getWeatherData() {
         "&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code" +
         "&forecast_days=1" +
         "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
-    try {
-        const response = await fetch(url);
+    return fetch(url)
+        .then(response => {
         if (!response.ok) {
             throw new Error("Failed to fetch weather data");
         }
-        const data = await response.text();
-        return new WeatherData(data);
-    }
-    catch (error) {
+        return response.text();
+    })
+        .then(data => new WeatherData(data))
+        .catch(error => {
         throw new Error("Failed to parse the weather data: " + error);
-    }
+    });
     // const xhr = new XMLHttpRequest();
     // xhr.open("GET", url, true);
     //
