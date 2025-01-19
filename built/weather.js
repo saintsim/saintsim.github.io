@@ -28,6 +28,7 @@ import { fetchWeatherApi } from 'openmeteo';
 // 95 Thunderstorm: Slight or moderate
 // 96 Thunderstorm with slight and heavy hail
 // 99 *	Thunderstorm heavy hail
+import cloudImage from '../public/assets/images/icon-cloud-64.png';
 const params = {
     "latitude": 35.6895,
     "longitude": 139.6917,
@@ -82,7 +83,12 @@ for (let i = 0; i < weatherData.hourly.time.length; i++) {
     );
     const weatherElement = document.getElementById('weather');
     if (weatherElement != null) {
-        weatherElement.innerHTML = weatherData.hourly.precipitationProbability[i].toString();
+        //weatherElement.innerHTML = weatherData.hourly.precipitationProbability[i].toString();
+        document.getElementById('amWeatherIcon').src = cloudImage;
+        //		const imgElement = document.createElement('img');
+        //		imgElement.src = cloudImage;
+        //		weatherElement.innerHTML.body.appendChild(imgElement);
+        //		amWeatherIcon = document.getElementById()
     }
 }
 //if (weatherData != null) {
