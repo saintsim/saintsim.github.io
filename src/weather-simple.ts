@@ -1,76 +1,50 @@
-
-import cloudImage from '../public/assets/images/icon-cloud-64.png';
-
 class WeatherData {
     apiData: string;
-
     constructor(apiData: string) {
         this.apiData = apiData;
     }
-
-    getTemperature(): string {
+    getTemperature() {
         const response = JSON.parse(this.apiData);
         console.log(response);
         return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
     }
-
-    //const response = JSON.parse(xhr.responseText);
-    // const temperature = `Temperature: ${response.hourly.temperature_2m[0]}°C`;
-    // resolve(temperature);
-
-    // greet() {
-    //     return `Hello, my name is ${this.name}.`;
-    // }
 }
+function getWeatherData(): Promise<string> {
+    return new Promise((resolve, reject) => {
 
-function getWeatherData(): Promise<WeatherData> {
-    const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
-    const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
+        const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
+        const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
+        const url = "https://api.open-meteo.com/v1/forecast?" +
+            "latitude=" + latitude +
+            "&longitude=" + longitude +
+            "&timezone=Asia%2FTokyo" +
+            "&current_weather=true" +
+            "&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code" +
+            "&forecast_days=1" +
+            "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
 
-    const url = "https://api.open-meteo.com/v1/forecast?" +
-        "latitude=" + latitude +
-        "&longitude=" + longitude +
-        "&timezone=Asia%2FTokyo" +
-        "&current_weather=true" +
-        "&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code" +
-        "&forecast_days=1" +
-        "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
-
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch weather data");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        resolve(xhr.responseText);
+                    } catch (error) {
+                        reject("Failed to parse the weather data.");
+                    }
+                } else {
+                    reject("Failed to fetch weather data.");
+                }
             }
-            return response.text();
-        })
-        .then(data => new WeatherData(data))
-        .catch(error => {
-            throw new Error("Failed to parse the weather data: " + error);
-        });
-        // const xhr = new XMLHttpRequest();
-        // xhr.open("GET", url, true);
-        //
-        // xhr.onreadystatechange = function () {
-        //     if (xhr.readyState === 4) {
-        //         if (xhr.status === 200) {
-        //             try {
-        //                 resolve(new WeatherData(xhr.responseText))
-        //             } catch (error) {
-        //                 reject("Failed to parse the weather data.");
-        //             }
-        //         } else {
-        //             reject("Failed to fetch weather data.");
-        //         }
-        //     }
-        // };
-        //
-        // xhr.send();
-    //});
-}
+        };
+        xhr.send();
+    });
+};
 
 getWeatherData()
-    .then((weatherData) => {
-        const temperature = weatherData.getTemperature();
+    .then((weatherResponse) => {
+        const temperature = new WeatherData(weatherResponse).getTemperature();
         console.log(temperature); // Log or set the temperature
         const weatherElement = document.getElementById("weather");
         if (weatherElement) {
