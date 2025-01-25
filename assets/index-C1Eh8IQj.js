@@ -125,6 +125,10 @@ const stormIcon = ""+new URL('images/icon-storm-96.png', import.meta.url).href+"
 
 const stormyWeatherIcon = ""+new URL('images/icon-stormy-weather-96.png', import.meta.url).href+"";
 
+const umbrellaIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAJwUlEQVR4nO1bW2xUxxnetFWi3pJW7Vse2r70qfdKvahqU1WqFNU+x+ayQNxEBJN4vdgLcQixZ9b2+oYNds3dAZMASQs0YAKxPbPmEmLAEXdwKQRTSkyCIQZKgKRtmlbAVN+cM+u1vbve3TkGTM4n/RLec85/Zr7zz3+bweNx4cJFDPgCfuEL+P8T65qLJOASqAmXQE24BGrCJVATLoFJwBvq/FImCT9iUp5vULbIpGybSfkJg7B/maRdmJQLg7CbJuVXTcJ7TcqO4R6D8MV4JivY/uvfzt72Rc+nB+K+zJK2nxuEV5iEdRmU/Q8kjSgk/jXoMCjfY1IWMkvYTz33In4XZN8wCSs3CDsTPfmsYFjk1O4WvqVHxNQ/7BVm0Pr9ifouUd7SJ/KXHRVZ9m/TGveJ0KYLomRdr5j10tsib+lh8VjtLmHS8FCyTxuUl+GdnrGO7BL2Y4PwzQbhN9UEJ1bsEPlN3YKs7xXz2AeivuO6KFh+LEJo0eoe+VvDVkvo+rNiXNnWCInzw1cj1yB17Iog684K37IjYkJo+4BlWu98LZO2/cgzJomjjA9YGhfTFx0UwVffFfUd1wYREGj+q31Ph3j+T2cGXVNS3nJejLfJebJx3zAdSvA7CJ++8ID8GNb72S05luLwDz13O7JCW75iULbMoPwGBg/LmfHCX8Tc1ssxJ4zJYglismRdb8x7lFRu7hcTyi0SoTPRvZCa1y8Jf9NRMa6sw/aVckxLvMU7HvLcjTBJeKJJeb+yOPi12vZ/JJzg+PJtcnIzXzwxIiGQ0g3npKXimedeOZ3UM3PbLounlxyK9pX9Jm0f57lb8Ggg/IBJeJNaro/P65LWMtLE4M9wf+4CLMmRiVAye83fhLJufIRkn6vYdEHk1O2ODjhLMPY7Sp4RbP2WSfgRFQBmrTwR1z9FC3yhIgEWkiwJSnIXHJDPT61/KyXyMTb4XBXZDcoPZxV3fPOOkJdR3P59tWQnVb4hU4zkJnJNTKnplBOY9dLJlMmDwDWooDLnj8kt5Wgp39gnJlbuUCReMEj4e7eVPDPIfmVQdl0t2VSsCHkcnptcvVPUh0e21njy3MunpR5v1RuivmNwapOUb2y9LHLq9qiU5xrmdFvIQ/lkUP6x5b/2D8vLRpIn5nfJQRetTs/6oi05RybS0NWTlg6M/cnGvcoSPx51ErNK+XdlXUq5zLXqU7Sgitfel4NF9J3HP9AkcMCakZyn+iGVwHqnNe63qxj2YRZlPxi1gGEQ9n6EvCSCRcMQKVhhJc35S49qk6cEpWAqaU1MEsPXIlkBfKLjgQXh3qDsKF7w+7rdaX/tKXbwKN3wnmMEKl8IInX0YE4DPpEdcjTFUXkeHHai5LghgVRutpYv6tV0rDfRxFVEDrWc19KFYOhV0ZnwxY6Ql0n5BJXn6QywaE2PHNhTiw45Rp4SlGzQ7W/q1tZVthHVjkq2NSuWR0PhB5XfS7bcaogjuQut5BeVhNMElrX0WcGkcoeMzrr6CpuPq2rlIup77aX7+Pwu7YF5K6ylgaXsNIGoRuBeoB8WpK/vWsQfouTTaEnxG1i6SD90BlTHrtilW0dKpVc6yxiR3gl9cFdoQMguTjqtMHt/QviW6accZRvOWZGybs+okDfQGrOyBKd05i05rHqK7Slbn13s36pl6UXdhiiZveaUHMjTi50PINHROLsUra6wtHgndCIqWzrZrZSsEK1wq3GpH9Uatg607AMrj48agRD4aryHrn/XMZ3YfrA3r1pSqDj4zezSsKhJo9XUEEOQushq4eX0q4VU/GBgpV7GEC3VrZdkWgNOktqowu6Z08ttav1bcmLoA44mgWhtqSaHk3pRutq+MDiyBRJ2Si6DPzs32Ry7axLapFcpjCRVdrWD/qSTerGDqLZMsbcdnzwa/plKSJ0styZX75QDqH794qgSiFxVbYGmW3LGazaoLdNs2v6TBATyStktcaAkaogStJugN532faqCBq/VsNBPqKMFm2R2t6YsEYF7cBM2qscqgdMXHbRa/a/83VG9xWvfUX5wV0zyMkNtXzAp+wSVh1N5VMMdILBghZ0yNTtTkQyupsKIxv+NeaAJrXqrWtidcB8BVUXJunfEs2tOybSkeG2vqNrSn7BES4VAdKpRzxavPSPfgeYDvn6opS+pPiSekVnEksRZRNWWi7KjjUYsnsG/8d5EvtM6i8NFFmn/ZYzoG/bHejF8CXyiaobGk/Hl22TqQ9afHUam2gGLlVfiXnwUJO1Tat6MaiUNF6wOTGLGimNyZy3WJJFEqy3PoddKX31PlmfRZ2hiyWNzO4X/hW5ROuQdTy223INBWd4wAk3CFsqtxhffllEHXwWKBikn7EMcS5OVCuHNBmFrTcJ2og0efR/Ijj6qMbn6Tfk7LHXA0q6KZ1adFJOqrAg96LgaYYe8z68Wk+csv2EQtgq1KPZwsXyGvqdo1clBlolUaWiHGh1wlUpFyUWD8E5rDrzZJGyTfeTu+iAya3fJlYasBC09O5AsiEVgWO1XqAnbuc95k7AqnL17JNT5uXgBKIO0f8cgnMr77Wexz4BMHgU+/obV4ETWzJXHB5+kknuzrBFuBL443glVb9HGzxtB/huT8IbojwZdmByWP5YmfkPqBJchg0rEqtllORdZ18bO57zejZ/FXA3Kq6PnMrmmUzZWbEMKDyeQ8uNDvlCPGWTeRKTFgje08X6YuEH5FWtpb48QOKOpe8jyYbtMyjIw6FSP+MqJUpYBK1L6JlZsF8+s7om4FPxt73F8ZAb5s/gAnhSAuRuETZJcRK8SwruH3WxQdta2uH+blM1MlbihyAy1fd2gvDWWj8ESjemI0zwjbRD+C5OygzHfRfmeDNr+sEcD4AKcWNxIjnqHD4LyKwbl+7NL+Lc9jkHcp5JzW/rNEj4tFAp9xulD5tBp0nCuQdilqA+1HCvC4xDADTgCV8Muwq/oWl08GJQVm4SvT2V/Id1T+vYZxXXwx55RgL2sGz13O3zu/5XTg0ugJlwCNeESqAmXQE24BGrCJVATLoGacAnUhEugJlwCNeESqAmXQE24BGrCJVATLoGacAnUhEugJlwCNeESqAmXQE24BGrCJdABAvMK8z/R1fOpRV4g/58gMXdO7pfj3pOX95C01EL/R7d3dGMAeQH/AcsK/dnx7vEFfJPse/bd3tGNAeQF/AGbnFN+v/+rQ68XFBR8zVeY32dZoK/wzozyLkYgEHjAV5jfLUkM5J/LK/R7A4HAgxBpeRHy8ru9Ia9jB4juKfiKfA8rEmMKrhX5tI6u3fPwhrz3Y4nCzyGw2MFlL35zLc+FCxcuPHcU/wdjwQY/McqICwAAAABJRU5ErkJggg==";
+
+const umbrellaClosedIcon = "data:image/png;base64,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";
+
 function getWeatherImage(weatherCode) {
     switch (weatherCode) {
         case 0: {
@@ -307,6 +311,9 @@ function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
+function getUmbrellaIcon(rainingHard) {
+    return rainingHard ? umbrellaIcon : umbrellaClosedIcon;
+}
 function getWorstWeatherCode(weatherCodes) {
     return Math.max(...weatherCodes);
 }
@@ -314,6 +321,9 @@ function getWorstWeatherCode(weatherCodes) {
 const morningBlockName = "Morning Block";
 const afternoonBlockName = "Afternoon Block";
 const eveningBlockName = "Evening Block";
+let chanceOfRainPerc = 0;
+let isUmbrellaNeeded = false;
+let rainTotalExpected = 0;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -339,8 +349,13 @@ function getWeatherElementForHourshours(hourly_weather_element, hours, usePrevio
 function sumArray(numbers) {
     return numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 }
-function getTemperatureBlock(blockName, hourly_weather_data) {
-    const hours = getHours(blockName);
+function removePastHours(numbers, current_hour) {
+    return numbers.filter(number => number >= current_hour);
+}
+function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
+    let hours = getHours(blockName);
+    // remove past hours
+    hours = removePastHours(hours, current_hour);
     // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
     // a bunch of the weather elements are for previous hour
     const tempByHour = getWeatherElementForHourshours(hourly_weather_data.temperature_2m, hours, false);
@@ -349,18 +364,20 @@ function getTemperatureBlock(blockName, hourly_weather_data) {
     const rainfallByHour = getWeatherElementForHourshours(hourly_weather_data.rain, hours, true);
     const snowfallByHour = getWeatherElementForHourshours(hourly_weather_data.snowfall, hours, true);
     const weatherCodeByHour = getWeatherElementForHourshours(hourly_weather_data.weathercode, hours, false);
+    const lastHour = hours.length === 0 ? 0 : hours[hours.length - 1];
     return {
         blockName: blockName,
-        blockStartHour: hours[0], // 24hr clock notation
-        blockEndHour: hours[hours.length - 1], // 24hr clock notation
-        tempMin: Math.min(...tempByHour),
-        tempMax: Math.max(...tempByHour),
-        tempFeelsLikeMin: Math.min(...tempFeelsLikeByHour),
-        tempFeelsLikeMax: Math.max(...tempFeelsLikeByHour),
-        precepitationPercHighest: Math.max(...precepitationPercByHour),
+        blockStartHour: hours.length === 0 ? 0 : hours[0], // 24hr clock notation
+        blockEndHour: lastHour, // 24hr clock notation
+        tempMin: tempByHour.length === 0 ? 0 : Math.min(...tempByHour),
+        tempMax: tempByHour.length === 0 ? 0 : Math.max(...tempByHour),
+        tempFeelsLikeMin: tempFeelsLikeByHour.length === 0 ? 0 : Math.min(...tempFeelsLikeByHour),
+        tempFeelsLikeMax: tempFeelsLikeByHour.length === 0 ? 0 : Math.max(...tempFeelsLikeByHour),
+        precepitationPercHighest: precepitationPercByHour.length === 0 ? 0 : Math.max(...precepitationPercByHour),
         totalRainfall: sumArray(rainfallByHour),
         totalSnowfall: sumArray(snowfallByHour),
-        weatherCode: getWorstWeatherCode(weatherCodeByHour)
+        weatherCode: getWorstWeatherCode(weatherCodeByHour),
+        pastData: current_hour > lastHour
     };
 }
 function getCurrentChanceOfRain(percentageChance, now) {
@@ -376,13 +393,36 @@ function setElementBlock(id, data) {
         currentElement.textContent = data;
     }
 }
-function updateBlock(blockName, elementName, iconName, response) {
-    const block = getTemperatureBlock(blockName, response.hourly);
-    const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
-    const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
-    const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
-    setElementBlock(elementName, `${tempString} / ${conditionsString} / ${percString}`);
-    document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
+function hideBlock(id) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.hidden = true;
+    }
+}
+function getHourFromISO8601(isoString) {
+    const date = new Date(isoString); // Parse the ISO 8601 string into a Date object
+    return date.getHours(); // Extract the hour in the local time zone
+}
+function updateBlock(blockName, elementName, iconName, currentHour, response) {
+    const block = getTemperatureBlock(blockName, response.hourly, currentHour);
+    if (block.pastData) {
+        hideBlock(elementName);
+        hideBlock(iconName);
+    }
+    else {
+        if (block.precepitationPercHighest > 50) {
+            isUmbrellaNeeded = true;
+            rainTotalExpected += block.totalRainfall;
+        }
+        if (chanceOfRainPerc < block.precepitationPercHighest) {
+            chanceOfRainPerc = block.precepitationPercHighest;
+        }
+        const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
+        const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+        setElementBlock(elementName, `${block.blockName} (${block.blockStartHour}-${block.blockEndHour}): ${tempString} / ${conditionsString} / ${percString}`);
+        document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
+    }
 }
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);
@@ -392,18 +432,20 @@ function updatePage(pageResponse) {
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
+    const currentHour = getHourFromISO8601(response.current.time);
     // update the blocks
-    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', response);
-    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', response);
-    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', response);
-    //    const morningBlock = getTemperatureBlock(morningBlockName, response.hourly);
-    //    const morningTempString = `${morningBlock.tempMin}°C (${morningBlock.tempFeelsLikeMin}°C) | ${morningBlock.tempMax}°C (${morningBlock.tempFeelsLikeMax}°C)`
-    //    const morningConditionsString = `${getWeatherDescription(morningBlock.weatherCode)}`;
-    //    const morningPercString = `${getCurrentChanceOfRain(morningBlock.precepitationPercHighest)}`;
-    //    setElementBlock("blockMorning", `${weatherConfig.blockMorningHours.toString()} / ${morningTempString} / ${morningConditionsString} / ${morningPercString}`);
-    //    (document.getElementById('morningWeatherIcon') as HTMLImageElement).src = getWeatherImage(morningBlock.weatherCode);
-    //const afternoonBlock = getTempBlock("Afternoon Block");
-    //const eveningBlock = getTempBlock("Evening Block");
+    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response);
+    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response);
+    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response);
+    const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`;
+    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`);
+    const umbrellaIcon = "umbrellaIcon";
+    if (isUmbrellaNeeded) {
+        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
+    }
+    else {
+        hideBlock(umbrellaIcon);
+    }
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
