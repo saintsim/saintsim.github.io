@@ -28,12 +28,13 @@ body {
 }
 
 .boxProperties {
-    width: 300px;
+    width: 270px;
     float: left;
     padding: 30px;
     border-radius: 15px;
     opacity: 90%;
     background-color: #324268;
+    text-align: center;
 }
 
 .temperatureStyling {
