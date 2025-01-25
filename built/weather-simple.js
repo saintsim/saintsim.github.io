@@ -18,7 +18,7 @@ function getHours(blockName) {
             return [];
     }
 }
-function getWeatherElementForHourshours(hourly_weather_element, hours, usePreviousHours) {
+function getWeatherElementForHours(hourly_weather_element, hours, usePreviousHours) {
     const weatherByHour = [];
     for (const hour of hours) {
         const hourToUse = usePreviousHours ? hour - 1 : hour;
@@ -40,12 +40,12 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
     hours = removePastHours(hours, current_hour);
     // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
     // a bunch of the weather elements are for previous hour
-    const tempByHour = getWeatherElementForHourshours(hourly_weather_data.temperature_2m, hours, false);
-    const tempFeelsLikeByHour = getWeatherElementForHourshours(hourly_weather_data.apparent_temperature, hours, false);
-    const precepitationPercByHour = getWeatherElementForHourshours(hourly_weather_data.precipitation_probability, hours, true);
-    const rainfallByHour = getWeatherElementForHourshours(hourly_weather_data.rain, hours, true);
-    const snowfallByHour = getWeatherElementForHourshours(hourly_weather_data.snowfall, hours, true);
-    const weatherCodeByHour = getWeatherElementForHourshours(hourly_weather_data.weathercode, hours, false);
+    const tempByHour = getWeatherElementForHours(hourly_weather_data.temperature_2m, hours, false);
+    const tempFeelsLikeByHour = getWeatherElementForHours(hourly_weather_data.apparent_temperature, hours, false);
+    const precepitationPercByHour = getWeatherElementForHours(hourly_weather_data.precipitation_probability, hours, true);
+    const rainfallByHour = getWeatherElementForHours(hourly_weather_data.rain, hours, true);
+    const snowfallByHour = getWeatherElementForHours(hourly_weather_data.snowfall, hours, true);
+    const weatherCodeByHour = getWeatherElementForHours(hourly_weather_data.weathercode, hours, false);
     const lastHour = hours.length === 0 ? 0 : hours[hours.length - 1];
     return {
         blockName: blockName,
@@ -81,10 +81,6 @@ function hideBlock(id) {
         currentElement.hidden = true;
     }
 }
-function getHourFromISO8601(isoString) {
-    const date = new Date(isoString); // Parse the ISO 8601 string into a Date object
-    return date.getHours(); // Extract the hour in the local time zone
-}
 function updateBlock(blockName, elementName, iconName, currentHour, response) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
     if (block.pastData) {
@@ -114,7 +110,7 @@ function updatePage(pageResponse) {
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
-    const currentHour = getHourFromISO8601(response.current.time);
+    const currentHour = new Date().getHours();
     // update the blocks
     updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response);
     updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response);
