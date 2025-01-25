@@ -1,9 +1,9 @@
 body {
     background-image: linear-gradient(to bottom, #2b3956, #283654, #253353, #213151, #1e2e4f, #203050, #213152, #233353, #2a3958, #31405d, #384661, #3f4d66);
-    width: 2544px;
     height: 609px;
     color: white;
-    padding: 20px;
+    width: 100%;
+    padding: 10px;
     font-family: "Roboto", serif;
     font-optical-sizing: auto;
     font-weight: 200;
@@ -12,6 +12,14 @@ body {
       "wdth" 100;
   }
 
+#header {
+    width: 1000px;
+}
+
+#heading-left {
+    float: left;
+}
+
 #title {
       font-weight: 500;
       font-size: 30px;
@@ -19,16 +27,23 @@ body {
 
 #date {
     margin-top: 10px;
+    float: right;
+}
+
+#dateTime {
+    float: right;
+    text-align: right;
 }
 
 #time {
       font-weight: 400;
-      font-size: 20px;
-      padding-bottom: 10px;
+      font-size: 30px;
 }
 
 #current_box {
     padding-left: 10px;
+    margin-left: 350px;
+    margin-right: auto;
 }
 
 .boxProperties {
