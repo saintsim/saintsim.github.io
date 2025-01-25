@@ -13,7 +13,7 @@ body {
   }
 
 #header {
-    width: 1000px;
+    width: 950px;
 }
 
 #heading-left {
@@ -49,7 +49,7 @@ body {
 .boxProperties {
     width: 270px;
     float: left;
-    padding: 30px;
+    padding: 20px;
     margin-right: 10px;
     margin-bottom: 30px;
     border-radius: 8px;
