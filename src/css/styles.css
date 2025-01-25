@@ -10,6 +10,31 @@ body {
     font-style: normal;
     font-variation-settings:
       "wdth" 100;
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
   }
 
 #header {
@@ -46,19 +71,21 @@ body {
     margin-right: auto;
     float: left;
     font-size: 20px;
+    text-align: center;
 }
 
 #currentTemperatureBox {
     float: left;
+    margin-top: 30px;
+}
+
+.current-box-margins {
     margin-left: 60px;
-    margin-right: 50px;
-    margin-top: 50px;
+    margin-right: 60px;
 }
 
 #currentRainBox {
     float: left;
-    margin-left: 50px;
-    margin-right: 50px;
     margin-top: 50px;
 }
 
@@ -73,6 +100,7 @@ body {
 
 #currentConditionsBox {
     padding-left: 30px;
+    padding-right: 30px;
     float: left;
     margin-top: 30px;
 }

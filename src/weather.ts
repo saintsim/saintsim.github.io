@@ -93,7 +93,7 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
 
 function getCurrentChanceOfRain(percentageChance: number, now: boolean): string {
     if (percentageChance === 0 )
-        return now ? "No rain currently" : "No rain expected";
+        return now ? "No Rain" : "No Rain expected";
     else {
         return `${percentageChance}% chance of rain`
     }
@@ -137,7 +137,7 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
         const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
 
-        setElementBlock(elementName + "Title", `${block.blockName} (${block.blockStartHour}-${block.blockEndHour})`);
+        setElementBlock(elementName + "Title", `${block.blockName}`);
         (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
         setElementBlock(elementName + "Temp", `${tempString}`);
         setElementBlock(elementName + "TempFeelsLike", `${tempFeelsLikeString}`);
@@ -162,7 +162,7 @@ function updateDayBlocks(response: any, currentHour: number) {
 
 function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`
-    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! Rain: ${chanceOfRainStr}`)
+    setElementBlock("carryUmbrealla", `${chanceOfRainStr}`)
     const umbrellaIcon: string = "umbrellaIcon";
     if (isUmbrellaNeeded) {
         (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);

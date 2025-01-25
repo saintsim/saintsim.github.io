@@ -374,7 +374,7 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
 }
 function getCurrentChanceOfRain(percentageChance, now) {
     if (percentageChance === 0)
-        return now ? "No rain currently" : "No rain expected";
+        return now ? "No Rain" : "No Rain expected";
     else {
         return `${percentageChance}% chance of rain`;
     }
@@ -408,7 +408,7 @@ function updateBlock(blockName, elementName, boxName, iconName, currentHour, res
         const tempFeelsLikeString = `${block.tempFeelsLikeMin}°C | ${block.tempFeelsLikeMax}°C`;
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
         const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
-        setElementBlock(elementName + "Title", `${block.blockName} (${block.blockStartHour}-${block.blockEndHour})`);
+        setElementBlock(elementName + "Title", `${block.blockName}`);
         document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
         setElementBlock(elementName + "Temp", `${tempString}`);
         setElementBlock(elementName + "TempFeelsLike", `${tempFeelsLikeString}`);
@@ -430,7 +430,7 @@ function updateDayBlocks(response, currentHour) {
 }
 function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`;
-    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! Rain: ${chanceOfRainStr}`);
+    setElementBlock("carryUmbrealla", `${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
     if (isUmbrellaNeeded) {
         document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);

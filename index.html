@@ -8,6 +8,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     </head>
 <body>
 <div id="header">
@@ -20,18 +21,19 @@
 <br />
 <!--Current temp hour:<span id="currentHour"></span><br />-->
 <div id="current_box">
-    <div id="currentIconBox">
+    <div id="currentIconBox" class="current-box-margins">
         <p><img id="currentWeatherIcon" src="" alt="Current Weather icon"></p>
         <p>&nbsp;<span id="currentConditions"></span></p>
     </div>
-    <div id="currentTemperatureBox">
-        <span id="currentTemperature" class="strongStyling"></span>&nbsp;&nbsp;<span id="currentTemperatureFeelsLike" class="secondaryStyling"></span>
+    <div id="currentTemperatureBox"  class="current-box-margins">
+        <p><span id="currentTemperature" class="strongStyling"></span></p>
+        <p><span id="currentTemperatureFeelsLike" class="secondaryStyling"></span></p>
     </div>
-    <div id="currentRainBox">
-        <span id="currentRain"></span>
+    <div id="currentRainBox" class="current-box-margins">
+        <span id="currentRain"></span><br /><br /><span class="material-icons-outlined secondaryStyling">water_drop</span>
     </div>
-    <div id="currentConditionsBox">
-        <p><span id="carryUmbrealla"></span></p>
+    <div id="currentConditionsBox" class="current-box-margins">
+        <p>&nbsp;<b><span id="carryUmbrealla" class="strongStyling"></span></b></p>&nbsp;<span class="secondaryStyling"><span class="material-icons-outlined">water_drop</span>%</span>
         <p><img id="umbrellaIcon" src="" alt="Umbrella icon"></p>
     </div>
 </div>
