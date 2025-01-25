@@ -201,3 +201,7 @@ export function getWeatherDescription(weatherCode: number): string {
             return "Unknown";
     }
 }
+
+export function getWorstWeatherCode(weatherCodes: number[]): number {
+    return Math.max(...weatherCodes);
+}

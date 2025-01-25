@@ -78,7 +78,9 @@ scheduleUpdateDate();
 setInterval(updateTime, 1000);
 
 const weatherConfig = {
-  blockMorningHours: [8, 9, 10, 11, 12]
+  blockMorningHours: [8, 9, 10, 11, 12],
+  blockAfternoonHours: [12, 14, 15, 16, 17, 18],
+  blockEveningHours: [19, 20, 21, 22, 23]
   //    apiUrl: 'https://api.example.com',
   //    debugMode: process.env.NODE_ENV === 'development',
   //    maxRetries: 3,
@@ -305,25 +307,65 @@ function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
+function getWorstWeatherCode(weatherCodes) {
+    return Math.max(...weatherCodes);
+}
 
-function getTempBlock(blockName) {
+const morningBlockName = "Morning Block";
+const afternoonBlockName = "Afternoon Block";
+const eveningBlockName = "Evening Block";
+function getHours(blockName) {
+    switch (blockName) {
+        case morningBlockName:
+            return weatherConfig.blockMorningHours;
+        case afternoonBlockName:
+            return weatherConfig.blockAfternoonHours;
+        case eveningBlockName:
+            return weatherConfig.blockEveningHours;
+        default:
+            return [];
+    }
+}
+function getWeatherElementForHourshours(hourly_weather_element, hours, usePreviousHours) {
+    const weatherByHour = [];
+    for (const hour of hours) {
+        const hourToUse = usePreviousHours ? hour - 1 : hour;
+        if (hourToUse < 0)
+            continue;
+        weatherByHour.push(hourly_weather_element[hourToUse]);
+    }
+    return weatherByHour;
+}
+function sumArray(numbers) {
+    return numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+}
+function getTemperatureBlock(blockName, hourly_weather_data) {
+    const hours = getHours(blockName);
+    // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
+    // a bunch of the weather elements are for previous hour
+    const tempByHour = getWeatherElementForHourshours(hourly_weather_data.temperature_2m, hours, false);
+    const tempFeelsLikeByHour = getWeatherElementForHourshours(hourly_weather_data.apparent_temperature, hours, false);
+    const precepitationPercByHour = getWeatherElementForHourshours(hourly_weather_data.precipitation_probability, hours, true);
+    const rainfallByHour = getWeatherElementForHourshours(hourly_weather_data.rain, hours, true);
+    const snowfallByHour = getWeatherElementForHourshours(hourly_weather_data.snowfall, hours, true);
+    const weatherCodeByHour = getWeatherElementForHourshours(hourly_weather_data.weathercode, hours, false);
     return {
         blockName: blockName,
-        blockStartHour: 1, // 24hr clock notation
-        blockEndHour: 2, // 24hr clock notation
-        tempMin: 3,
-        tempMax: 4,
-        tempFeelsLikeMin: 5,
-        tempFeelsLikeMax: 6,
-        precepitationPercHighest: 7,
-        totalRainfall: 8,
-        totalSnowfall: 9,
-        weatherCode: 0
+        blockStartHour: hours[0], // 24hr clock notation
+        blockEndHour: hours[hours.length - 1], // 24hr clock notation
+        tempMin: Math.min(...tempByHour),
+        tempMax: Math.max(...tempByHour),
+        tempFeelsLikeMin: Math.min(...tempFeelsLikeByHour),
+        tempFeelsLikeMax: Math.max(...tempFeelsLikeByHour),
+        precepitationPercHighest: Math.max(...precepitationPercByHour),
+        totalRainfall: sumArray(rainfallByHour),
+        totalSnowfall: sumArray(snowfallByHour),
+        weatherCode: getWorstWeatherCode(weatherCodeByHour)
     };
 }
-function getCurrentChanceOfRain(percentageChance) {
+function getCurrentChanceOfRain(percentageChance, now) {
     if (percentageChance === 0)
-        return "No rain currently";
+        return now ? "No rain currently" : "No rain expected";
     else {
         return `${percentageChance}% chance of rain`;
     }
@@ -334,17 +376,32 @@ function setElementBlock(id, data) {
         currentElement.textContent = data;
     }
 }
+function updateBlock(blockName, elementName, iconName, response) {
+    const block = getTemperatureBlock(blockName, response.hourly);
+    const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
+    const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
+    const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+    setElementBlock(elementName, `${tempString} / ${conditionsString} / ${percString}`);
+    document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
+}
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);
     console.log(response);
     const weatherCode = response.current.weather_code;
     setElementBlock("currentTemperature", `${response.current.temperature_2m}°C (${response.current.apparent_temperature}°C)`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
-    setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain));
-    document.getElementById('amWeatherIcon').src = getWeatherImage(weatherCode);
+    setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
+    document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
     // update the blocks
-    const morningBlock = getTempBlock("Morning Block");
-    setElementBlock("blockMorning", weatherConfig.blockMorningHours.toString() + morningBlock.blockName);
+    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', response);
+    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', response);
+    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', response);
+    //    const morningBlock = getTemperatureBlock(morningBlockName, response.hourly);
+    //    const morningTempString = `${morningBlock.tempMin}°C (${morningBlock.tempFeelsLikeMin}°C) | ${morningBlock.tempMax}°C (${morningBlock.tempFeelsLikeMax}°C)`
+    //    const morningConditionsString = `${getWeatherDescription(morningBlock.weatherCode)}`;
+    //    const morningPercString = `${getCurrentChanceOfRain(morningBlock.precepitationPercHighest)}`;
+    //    setElementBlock("blockMorning", `${weatherConfig.blockMorningHours.toString()} / ${morningTempString} / ${morningConditionsString} / ${morningPercString}`);
+    //    (document.getElementById('morningWeatherIcon') as HTMLImageElement).src = getWeatherImage(morningBlock.weatherCode);
     //const afternoonBlock = getTempBlock("Afternoon Block");
     //const eveningBlock = getTempBlock("Evening Block");
 }
