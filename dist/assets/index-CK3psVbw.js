@@ -319,6 +319,8 @@ const morningBlockName = "Morning";
 const afternoonBlockName = "Afternoon";
 const eveningBlockName = "Evening";
 let chanceOfRainPerc = 0;
+let isUmbrellaNeeded = false;
+let rainTotalExpected = 0;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -383,7 +385,17 @@ function setElementBlock(id, data) {
         currentElement.textContent = data;
     }
 }
+function hideBlock(id) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.style.display = "none";
+    }
+}
 function updateGlobalRainDetails(block) {
+    if (block.precepitationPercHighest > 50) {
+        isUmbrellaNeeded = true;
+        rainTotalExpected += block.totalRainfall;
+    }
     if (chanceOfRainPerc < block.precepitationPercHighest) {
         chanceOfRainPerc = block.precepitationPercHighest;
     }
@@ -420,10 +432,11 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`;
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
-    //if (isUmbrellaNeeded) {
-    {
-        //(document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
-        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(false);
+    if (isUmbrellaNeeded) {
+        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
+    }
+    else {
+        hideBlock(umbrellaIcon);
     }
 }
 function updatePage(pageResponse) {

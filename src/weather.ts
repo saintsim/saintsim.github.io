@@ -164,10 +164,8 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`)
     const umbrellaIcon: string = "umbrellaIcon";
-    //if (isUmbrellaNeeded) {
-    if (true) {
-        //(document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
-        (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(false);
+    if (isUmbrellaNeeded) {
+        (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
     } else {
         hideBlock(umbrellaIcon);
     }
