@@ -1,127 +1,197 @@
-// import { fetchWeatherApi } from 'openmeteo';
-//
-// // Weather codes:
-// // 0 Clear sky
-// // 1 Mainly clear
-// // 2 partly cloudy
-// // 3 overcast
-// // 45 Fog
-// // 48 depositing rime fog
-// // 51 Drizzle: Light
-// // 53 Drizzle: moderate
-// // 55 Drizzile:  dense intensity
-// // 56 Freezing Drizzle: Light
-// // 57 Freezing Drizzle: dense intensity
-// // 61 Rain: Slight
-// // 63 Rain moderate
-// // 65 Rain heavy intensity
-// // 66 Freezing Rain: Light
-// // 67 Freezing rain heavy intensity
-// // 71 Snow fall: Slight
-// // 73 Snow fall moderate
-// // 75 Snow fall heavy intensity
-// // 77 Snow grains
-// // 80 Rain showers: Slight
-// // 81 Rain showers moderate
-// // 82 Rain showers violent
-// // 85 Snow showers slight
-// // 86 Snow showers heavy
-// // 95 Thunderstorm: Slight or moderate
-// // 96 Thunderstorm with slight and heavy hail
-// // 99 *	Thunderstorm heavy hail
-//
-// import cloudImage from '../public/assets/images/icon-cloud-64.png';
-//
-// const params = {
-// 	"latitude": 35.6895,
-// 	"longitude": 139.6917,
-// 	"current": ["is_day", "weather_code"],
-// 	"hourly": ["temperature_2m", "apparent_temperature", "precipitation_probability", "precipitation", "rain", "showers", "snowfall", "weather_code"],
-// 	"timezone": "Asia/Tokyo",
-// 	"forecast_days": 1
-// };
-// const url = "https://api.open-meteo.com/v1/forecast";
-// const responses = await fetchWeatherApi(url, params);
-//
-// // Helper function to form time ranges
-// const range = (start: number, stop: number, step: number) =>
-// 	Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
-//
-// // Process first location. Add a for-loop for multiple locations or weather models
-// const response = responses[0];
-//
-// // Attributes for timezone and location
-// const utcOffsetSeconds = response.utcOffsetSeconds();
-// const timezone = response.timezone();
-// const timezoneAbbreviation = response.timezoneAbbreviation();
-// const latitude = response.latitude();
-// const longitude = response.longitude();
-//
-// const current = response.current()!;
-// const hourly = response.hourly()!;
-//
-// // Note: The order of weather variables in the URL query and the indices below need to match!
-// const weatherData = {
-// 	current: {
-// 		time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
-// 		isDay: current.variables(0)!.value(),
-// 		weatherCode: current.variables(1)!.value(),
-// 	},
-// 	hourly: {
-// 		time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
-// 			(t) => new Date((t + utcOffsetSeconds) * 1000)
-// 		),
-// 		temperature2m: hourly.variables(0)!.valuesArray()!,
-// 		apparentTemperature: hourly.variables(1)!.valuesArray()!,
-// 		precipitationProbability: hourly.variables(2)!.valuesArray()!,
-// 		precipitation: hourly.variables(3)!.valuesArray()!,
-// 		rain: hourly.variables(4)!.valuesArray()!,
-// 		showers: hourly.variables(5)!.valuesArray()!,
-// 		snowfall: hourly.variables(6)!.valuesArray()!,
-// 		weatherCode: hourly.variables(7)!.valuesArray()!,
-// 	},
-// };
-//
-// // `weatherData` now contains a simple structure with arrays for datetime and weather data
-// for (let i = 0; i < weatherData.hourly.time.length; i++) {
-// 	console.log(
-// 		"Time: ",
-// 		weatherData.hourly.time[i].toISOString(),
-// 		", Temp: ",
-// 		weatherData.hourly.temperature2m[i], // air temp at 2m in Celcius
-// 		", Apparent Temp: ",
-// 		weatherData.hourly.apparentTemperature[i], // feels like
-// 		", Precept prob: ",
-// 		weatherData.hourly.precipitationProbability[i], // Probability of precipitation with more than 0.1 mm of the preceding hour- so hour before!.
-// 		", Precept: ",
-// 		weatherData.hourly.precipitation[i], // mm, Total precipitation (rain, showers, snow) sum of the preceding hour
-// 		", Rain: ",
-// 		weatherData.hourly.rain[i], // mm, Rain from large scale weather systems of the preceding hour in millimeter
-// 		", Showers: ",
-// 		weatherData.hourly.showers[i], // short lived, Showers from convective precipitation in millimeters from the preceding hour
-// 		", Snowfall: ",
-// 		weatherData.hourly.snowfall[i], // cm, Snowfall amount of the preceding hour in centimeters. For the water equivalent in millimeter, divide by 7. E.g. 7 cm snow = 10 mm precipitation water equivalent
-// 		", Weather code: ",
-// 		weatherData.hourly.weatherCode[i] // right now, see weather codes
-// 	);
-// 	const weatherElement = document.getElementById('weather');
-// 	if(weatherElement != null) {
-// 		//weatherElement.innerHTML = weatherData.hourly.precipitationProbability[i].toString();
-//
-// 		(document.getElementById('amWeatherIcon') as HTMLImageElement).src = cloudImage;
-//
-// //		const imgElement = document.createElement('img');
-// //		imgElement.src = cloudImage;
-// //		weatherElement.innerHTML.body.appendChild(imgElement);
-// //		amWeatherIcon = document.getElementById()
-// 	}
-// }
-//
-// //if (weatherData != null) {
-// //	const weatherElement = document.getElementById('weather')
-// //	if(weatherElement != null) {
-// //		weatherElement.innerHTML = weatherData.current.isDay.toString();
-// //	}
-// //}
-//
-// // `weatherData` now contains a simple structure with arrays for datetime and weather data
+import { weatherConfig } from './config';
+import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes'
+
+export const morningBlockName: string = "Morning Block"
+export const afternoonBlockName: string = "Afternoon Block"
+export const eveningBlockName: string = "Evening Block"
+
+export let chanceOfRainPerc: number = 0
+export let isUmbrellaNeeded: boolean = false
+export let rainTotalExpected: number = 0
+
+interface TempBlock {
+    blockName: string;
+    blockStartHour: number; // 24hr clock notation
+    blockEndHour: number; // 24hr clock notation
+    tempMin: number;
+    tempMax: number;
+    tempFeelsLikeMin: number;
+    tempFeelsLikeMax: number;
+    precepitationPercHighest: number;
+    totalRainfall: number;
+    totalSnowfall: number;
+    weatherCode: number;
+    pastData: boolean;
+}
+
+function getHours(blockName: string): number[] {
+    switch (blockName) {
+        case morningBlockName:
+            return weatherConfig.blockMorningHours
+        case afternoonBlockName:
+            return weatherConfig.blockAfternoonHours
+        case eveningBlockName:
+            return weatherConfig.blockEveningHours
+        default:
+            return []
+    }
+}
+
+function getWeatherElementForHours(hourly_weather_element: any, hours: number[], usePreviousHours: boolean): number[] {
+    const weatherByHour = []
+    for (const hour of hours) {
+        const hourToUse = usePreviousHours ? hour-1 : hour
+        if (hourToUse < 0)
+            continue;
+        weatherByHour.push(hourly_weather_element[hourToUse])
+    }
+    return weatherByHour;
+}
+
+function sumArray(numbers: number[]): number {
+    return numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+}
+
+function removePastHours(numbers: number[], current_hour: number): number[] {
+    return numbers.filter(number => number >= current_hour);
+}
+
+function getTemperatureBlock(blockName: string, hourly_weather_data: any, current_hour: number): TempBlock {
+    let hours = getHours(blockName);
+
+    // remove past hours
+    hours = removePastHours(hours, current_hour)
+
+    // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
+    // a bunch of the weather elements are for previous hour
+    const tempByHour: number[] = getWeatherElementForHours(hourly_weather_data.temperature_2m, hours, false)
+    const tempFeelsLikeByHour: number[] = getWeatherElementForHours(hourly_weather_data.apparent_temperature, hours, false)
+    const precepitationPercByHour: number[] = getWeatherElementForHours(hourly_weather_data.precipitation_probability, hours, true)
+    const rainfallByHour: number[] = getWeatherElementForHours(hourly_weather_data.rain, hours, true)
+    const snowfallByHour: number[] = getWeatherElementForHours(hourly_weather_data.snowfall, hours, true)
+    const weatherCodeByHour: number[] = getWeatherElementForHours(hourly_weather_data.weathercode, hours, false)
+
+    const lastHour: number = hours.length === 0 ? 0 : hours[hours.length-1]
+
+    return {
+        blockName: blockName,
+        blockStartHour: hours.length === 0 ? 0 : hours[0], // 24hr clock notation
+        blockEndHour: lastHour, // 24hr clock notation
+        tempMin: tempByHour.length === 0 ? 0 : Math.min(...tempByHour),
+        tempMax: tempByHour.length === 0 ? 0 : Math.max(...tempByHour),
+        tempFeelsLikeMin: tempFeelsLikeByHour.length === 0 ? 0 : Math.min(...tempFeelsLikeByHour),
+        tempFeelsLikeMax: tempFeelsLikeByHour.length === 0 ? 0 : Math.max(...tempFeelsLikeByHour),
+        precepitationPercHighest: precepitationPercByHour.length === 0 ? 0 : Math.max(...precepitationPercByHour),
+        totalRainfall: sumArray(rainfallByHour),
+        totalSnowfall: sumArray(snowfallByHour),
+        weatherCode: getWorstWeatherCode(weatherCodeByHour),
+        pastData: current_hour > lastHour
+    }
+}
+
+function getCurrentChanceOfRain(percentageChance: number, now: boolean): string {
+    if (percentageChance === 0 )
+        return now ? "No rain currently" : "No rain expected";
+    else {
+        return `${percentageChance}% chance of rain`
+    }
+}
+
+function setElementBlock(id: string, data: any) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.textContent = data;
+    }
+}
+
+function hideBlock(id: string) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.hidden = true;
+    }
+}
+
+function updateBlock(blockName: string, elementName: string, iconName: string, currentHour: number, response: any) {
+    const block = getTemperatureBlock(blockName, response.hourly, currentHour);
+
+    if (block.pastData) {
+        hideBlock(elementName);
+        hideBlock(iconName);
+    } else {
+        if (block.precepitationPercHighest > 50) {
+            isUmbrellaNeeded = true
+            rainTotalExpected += block.totalRainfall
+        }
+        if(chanceOfRainPerc < block.precepitationPercHighest) {
+            chanceOfRainPerc = block.precepitationPercHighest
+        }
+
+        const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`
+        const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+
+        setElementBlock(elementName, `${block.blockName} (${block.blockStartHour}-${block.blockEndHour}): ${tempString} / ${conditionsString} / ${percString}`);
+        (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
+    }
+}
+
+function updatePage(pageResponse: string) {
+    const response = JSON.parse(pageResponse);
+    console.log(response);
+
+    const weatherCode: number = response.current.weather_code;
+    setElementBlock("currentTemperature", `${response.current.temperature_2m}°C (${response.current.apparent_temperature}°C)`);
+    setElementBlock("currentConditions", getWeatherDescription(weatherCode));
+    setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
+
+    (document.getElementById('currentWeatherIcon') as HTMLImageElement).src = getWeatherImage(weatherCode);
+
+    const currentHour: number = new Date().getHours();
+
+    // update the blocks
+    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response)
+    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response)
+    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response)
+
+    const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`
+    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`)
+    const umbrellaIcon: string = "umbrellaIcon"
+    if (isUmbrellaNeeded) {
+        (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
+    } else {
+        hideBlock(umbrellaIcon);
+    }
+
+    setElementBlock("currentHour", currentHour)
+}
+
+function getWeatherData() {
+    const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
+    const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
+    const url = "https://api.open-meteo.com/v1/forecast?" +
+        "latitude=" + latitude +
+        "&longitude=" + longitude +
+        "&timezone=Asia%2FTokyo" +
+        "&current=temperature_2m,apparent_temperature,is_day,precipitation,precipitation_probability,rain,showers,snowfall,weather_code" +
+        "&forecast_days=1" +
+        "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    updatePage(xhr.responseText);
+                } catch (error) {
+                    console.log("Failed to parse the weather data.");
+                }
+        } else {
+            if (xhr.status !== 200) {
+                console.log(`Failed to fetch weather data: ${xhr.status} / ${xhr.readyState}`);
+            }
+        }
+    };
+    xhr.send();
+}
+
+getWeatherData();
