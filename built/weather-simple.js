@@ -1,8 +1,11 @@
 import { weatherConfig } from './config';
-import { getWeatherImage, getWeatherDescription, getWorstWeatherCode } from './weather-codes';
+import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes';
 export const morningBlockName = "Morning Block";
 export const afternoonBlockName = "Afternoon Block";
 export const eveningBlockName = "Evening Block";
+export let chanceOfRainPerc = 0;
+export let isUmbrellaNeeded = false;
+export let rainTotalExpected = 0;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -28,8 +31,13 @@ function getWeatherElementForHourshours(hourly_weather_element, hours, usePrevio
 function sumArray(numbers) {
     return numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 }
-function getTemperatureBlock(blockName, hourly_weather_data) {
-    const hours = getHours(blockName);
+function removePastHours(numbers, current_hour) {
+    return numbers.filter(number => number >= current_hour);
+}
+function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
+    let hours = getHours(blockName);
+    // remove past hours
+    hours = removePastHours(hours, current_hour);
     // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
     // a bunch of the weather elements are for previous hour
     const tempByHour = getWeatherElementForHourshours(hourly_weather_data.temperature_2m, hours, false);
@@ -38,18 +46,20 @@ function getTemperatureBlock(blockName, hourly_weather_data) {
     const rainfallByHour = getWeatherElementForHourshours(hourly_weather_data.rain, hours, true);
     const snowfallByHour = getWeatherElementForHourshours(hourly_weather_data.snowfall, hours, true);
     const weatherCodeByHour = getWeatherElementForHourshours(hourly_weather_data.weathercode, hours, false);
+    const lastHour = hours.length === 0 ? 0 : hours[hours.length - 1];
     return {
         blockName: blockName,
-        blockStartHour: hours[0], // 24hr clock notation
-        blockEndHour: hours[hours.length - 1], // 24hr clock notation
-        tempMin: Math.min(...tempByHour),
-        tempMax: Math.max(...tempByHour),
-        tempFeelsLikeMin: Math.min(...tempFeelsLikeByHour),
-        tempFeelsLikeMax: Math.max(...tempFeelsLikeByHour),
-        precepitationPercHighest: Math.max(...precepitationPercByHour),
+        blockStartHour: hours.length === 0 ? 0 : hours[0], // 24hr clock notation
+        blockEndHour: lastHour, // 24hr clock notation
+        tempMin: tempByHour.length === 0 ? 0 : Math.min(...tempByHour),
+        tempMax: tempByHour.length === 0 ? 0 : Math.max(...tempByHour),
+        tempFeelsLikeMin: tempFeelsLikeByHour.length === 0 ? 0 : Math.min(...tempFeelsLikeByHour),
+        tempFeelsLikeMax: tempFeelsLikeByHour.length === 0 ? 0 : Math.max(...tempFeelsLikeByHour),
+        precepitationPercHighest: precepitationPercByHour.length === 0 ? 0 : Math.max(...precepitationPercByHour),
         totalRainfall: sumArray(rainfallByHour),
         totalSnowfall: sumArray(snowfallByHour),
-        weatherCode: getWorstWeatherCode(weatherCodeByHour)
+        weatherCode: getWorstWeatherCode(weatherCodeByHour),
+        pastData: current_hour > lastHour
     };
 }
 function getCurrentChanceOfRain(percentageChance, now) {
@@ -65,13 +75,36 @@ function setElementBlock(id, data) {
         currentElement.textContent = data;
     }
 }
-function updateBlock(blockName, elementName, iconName, response) {
-    const block = getTemperatureBlock(blockName, response.hourly);
-    const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
-    const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
-    const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
-    setElementBlock(elementName, `${tempString} / ${conditionsString} / ${percString}`);
-    document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
+function hideBlock(id) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.hidden = true;
+    }
+}
+function getHourFromISO8601(isoString) {
+    const date = new Date(isoString); // Parse the ISO 8601 string into a Date object
+    return date.getHours(); // Extract the hour in the local time zone
+}
+function updateBlock(blockName, elementName, iconName, currentHour, response) {
+    const block = getTemperatureBlock(blockName, response.hourly, currentHour);
+    if (block.pastData) {
+        hideBlock(elementName);
+        hideBlock(iconName);
+    }
+    else {
+        if (block.precepitationPercHighest > 50) {
+            isUmbrellaNeeded = true;
+            rainTotalExpected += block.totalRainfall;
+        }
+        if (chanceOfRainPerc < block.precepitationPercHighest) {
+            chanceOfRainPerc = block.precepitationPercHighest;
+        }
+        const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
+        const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+        setElementBlock(elementName, `${block.blockName} (${block.blockStartHour}-${block.blockEndHour}): ${tempString} / ${conditionsString} / ${percString}`);
+        document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
+    }
 }
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);
@@ -81,18 +114,20 @@ function updatePage(pageResponse) {
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
+    const currentHour = getHourFromISO8601(response.current.time);
     // update the blocks
-    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', response);
-    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', response);
-    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', response);
-    //    const morningBlock = getTemperatureBlock(morningBlockName, response.hourly);
-    //    const morningTempString = `${morningBlock.tempMin}°C (${morningBlock.tempFeelsLikeMin}°C) | ${morningBlock.tempMax}°C (${morningBlock.tempFeelsLikeMax}°C)`
-    //    const morningConditionsString = `${getWeatherDescription(morningBlock.weatherCode)}`;
-    //    const morningPercString = `${getCurrentChanceOfRain(morningBlock.precepitationPercHighest)}`;
-    //    setElementBlock("blockMorning", `${weatherConfig.blockMorningHours.toString()} / ${morningTempString} / ${morningConditionsString} / ${morningPercString}`);
-    //    (document.getElementById('morningWeatherIcon') as HTMLImageElement).src = getWeatherImage(morningBlock.weatherCode);
-    //const afternoonBlock = getTempBlock("Afternoon Block");
-    //const eveningBlock = getTempBlock("Evening Block");
+    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response);
+    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response);
+    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response);
+    const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`;
+    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`);
+    const umbrellaIcon = "umbrellaIcon";
+    if (isUmbrellaNeeded) {
+        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
+    }
+    else {
+        hideBlock(umbrellaIcon);
+    }
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo

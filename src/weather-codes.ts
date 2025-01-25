@@ -18,6 +18,9 @@ import lightSnowIcon from '../public/assets/images/icon-light-snow-96.png'
 import stormIcon from '../public/assets/images/icon-storm-96.png'
 import stormyWeatherIcon from '../public/assets/images/icon-stormy-weather-96.png'
 
+import umbrellaIcon from '../public/assets/images/icon-umbrella-80.png'
+import umbrellaClosedIcon from '../public/assets/images/icon-closed-umbrella-80.png'
+
 export function getWeatherImage(weatherCode: number): string {
     switch (weatherCode) {
         case 0: {
@@ -200,6 +203,10 @@ export function getWeatherDescription(weatherCode: number): string {
         default:
             return "Unknown";
     }
+}
+
+export function getUmbrellaIcon(rainingHard: boolean): string {
+    return rainingHard ? umbrellaIcon : umbrellaClosedIcon;
 }
 
 export function getWorstWeatherCode(weatherCodes: number[]): number {
