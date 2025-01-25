@@ -35,7 +35,8 @@ body {
     width: 270px;
     float: left;
     padding: 30px;
-    margin-bottom: 50px;
+    margin-right: 10px;
+    margin-bottom: 30px;
     border-radius: 8px;
     opacity: 90%;
     background-color: #324268;
@@ -65,4 +66,13 @@ body {
     clear: left;
     float: left;
     padding-top: 50px;
+}
+
+#col-left {
+    float: left;
+    margin-right: 50px;
+}
+
+#col-right {
+    float: left;
 }

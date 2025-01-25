@@ -60,7 +60,9 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
     let hours = getHours(blockName);
 
     // remove past hours
-    hours = removePastHours(hours, current_hour)
+    if (weatherConfig.removePastBlocks) {
+        hours = removePastHours(hours, current_hour)
+    }
 
     // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
     // a bunch of the weather elements are for previous hour
@@ -124,7 +126,7 @@ function updateGlobalRainDetails(block: TemperatureBlock) {
 function updateBlock(blockName: string, elementName: string, boxName: string, iconName: string, currentHour: number, response: any) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
 
-    if (block.pastData) {
+    if (weatherConfig.removePastBlocks && block.pastData) {
         hideBlock(boxName);
         hideBlock(iconName);
     } else {
