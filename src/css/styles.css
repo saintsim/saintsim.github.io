@@ -3,6 +3,7 @@ body {
     width: 2544px;
     height: 609px;
     color: white;
+    padding: 20px;
     font-family: "Roboto", serif;
     font-optical-sizing: auto;
     font-weight: 200;
@@ -13,13 +14,23 @@ body {
 
 #title {
       font-weight: 500;
+      font-size: 30px;
+}
+
+#current_box {
+    padding-left: 10px;
 }
 
 .boxProperties {
-    width: 30%;
+    width: 300px;
     float: left;
-    padding: 50px;
+    padding: 30px;
     border-radius: 15px;
     opacity: 90%;
     background-color: #324268;
+}
+
+#blockEveningTemp {
+    font-weight: 500;
+    font-size: 20px;
 }

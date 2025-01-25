@@ -130,14 +130,17 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
     } else {
         updateGlobalRainDetails(block)
 
-        const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`
+        const tempString = `${block.tempMin}°C | ${block.tempMax}°C`
+        const tempFeelsLikeString = `${block.tempFeelsLikeMin}°C | ${block.tempFeelsLikeMax}°C`
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
         const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
 
         setElementBlock(elementName + "Title", `${block.blockName} (${block.blockStartHour}-${block.blockEndHour})`);
         (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
         setElementBlock(elementName + "Temp", `${tempString}`);
-        setElementBlock(elementName, `${conditionsString} | ${percString}`);
+        setElementBlock(elementName + "TempFeelsLike", `${tempFeelsLikeString}`);
+        setElementBlock(elementName + "CurrentConditions", `${conditionsString}`);
+        setElementBlock(elementName + "CurrentRain", `${percString}`);
     }
 }
 
