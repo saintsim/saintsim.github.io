@@ -1,8 +1,8 @@
 import { weatherConfig } from './config';
 import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes';
-export const morningBlockName = "Morning Block";
-export const afternoonBlockName = "Afternoon Block";
-export const eveningBlockName = "Evening Block";
+export const morningBlockName = "Morning";
+export const afternoonBlockName = "Afternoon";
+export const eveningBlockName = "Evening";
 export let chanceOfRainPerc = 0;
 export let isUmbrellaNeeded = false;
 export let rainTotalExpected = 0;
@@ -111,7 +111,8 @@ function updateBlock(blockName, elementName, boxName, iconName, currentHour, res
     }
 }
 function updateCurrentBlock(response, weatherCode) {
-    setElementBlock("currentTemperature", `${response.current.temperature_2m}°C (${response.current.apparent_temperature}°C)`);
+    setElementBlock("currentTemperature", `${response.current.temperature_2m}°C`);
+    setElementBlock("currentTemperatureFeelsLike", `${response.current.apparent_temperature}°C`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
@@ -122,8 +123,8 @@ function updateDayBlocks(response, currentHour) {
     updateBlock(eveningBlockName, "blockEvening", "evening_box", 'eveningWeatherIcon', currentHour, response);
 }
 function updateChanceOfRainBlock() {
-    const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`;
-    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`);
+    const chanceOfRainStr = `${chanceOfRainPerc}%`;
+    setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! Rain: ${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
     if (isUmbrellaNeeded) {
         document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
