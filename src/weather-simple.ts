@@ -10,6 +10,7 @@
 //     }
 // }
 
+import { weatherConfig } from './config';
 import clearSkyIcon from '../public/assets/images/icon-sun-96.png'
 import mainlyClearIcon from '../public/assets/images/icon-mainly-clear-day-96.png'
 import partlyCloudyIcon from '../public/assets/images/icon-partly-cloudy-96.png'
@@ -69,6 +70,62 @@ function getWeatherImage(weatherCode: number): string {
 // // 96 Thunderstorm with slight and heavy hail
 // // 99 *	Thunderstorm heavy hail
 
+interface TempBlock {
+    blockName: string;
+    blockStartHour: number; // 24hr clock notation
+    blockEndHour: number; // 24hr clock notation
+    tempMin: number;
+    tempMax: number;
+    tempFeelsLikeMin: number;
+    tempFeelsLikeMax: number;
+    precepitationPercHighest: number;
+    totalRainfall: number;
+    totalSnowfall: number;
+    weatherCode: number;
+}
+
+function getTempBlock(blockName: string): TempBlock {
+    return {
+        blockName: blockName,
+        blockStartHour: 1, // 24hr clock notation
+        blockEndHour: 2, // 24hr clock notation
+        tempMin: 3,
+        tempMax: 4,
+        tempFeelsLikeMin: 5,
+        tempFeelsLikeMax: 6,
+        precepitationPercHighest: 7,
+        totalRainfall: 8,
+        totalSnowfall: 9,
+        weatherCode: 0
+    }
+}
+
+function updatePage(pageResponse: string) {
+    //const temperature = new WeatherData(xhr.responseText).getTemperature();
+    const response = JSON.parse(pageResponse);
+    console.log(response);
+    const temperature = `Temperature: ${response.hourly.temperature_2m[0]}°C`;
+    console.log(temperature); // Log or set the temperature
+    const weatherElement = document.getElementById("weather");
+    if (weatherElement) {
+        weatherElement.textContent = temperature;
+    }
+    const weatherCode: number = response.current_weather.weathercode;
+    const weatherIcon: string = getWeatherImage(weatherCode);
+    (document.getElementById('amWeatherIcon') as HTMLImageElement).src = weatherIcon;
+
+    // update the blocks
+    const morningBlock = getTempBlock("Morning Block");
+
+    const blocmMorningElement = document.getElementById("blockMorning");
+    if (blocmMorningElement) {
+        blocmMorningElement.textContent = weatherConfig.blockMorningHours.toString() + morningBlock.blockName;
+    }
+
+    //const afternoonBlock = getTempBlock("Afternoon Block");
+    //const eveningBlock = getTempBlock("Evening Block");
+}
+
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
     const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
@@ -86,18 +143,7 @@ function getWeatherData() {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
-                    //const temperature = new WeatherData(xhr.responseText).getTemperature();
-                    const response = JSON.parse(xhr.responseText);
-                    console.log(response);
-                    const temperature = `Temperature: ${response.hourly.temperature_2m[0]}°C`;
-                    console.log(temperature); // Log or set the temperature
-                    const weatherElement = document.getElementById("weather");
-                    if (weatherElement) {
-                        weatherElement.textContent = temperature;
-                    }
-                    const weatherCode: number = response.current_weather.weathercode;
-                    const weatherIcon: string = getWeatherImage(weatherCode);
-                    (document.getElementById('amWeatherIcon') as HTMLImageElement).src = weatherIcon;
+                    updatePage(xhr.responseText);
                 } catch (error) {
                     console.log("Failed to parse the weather data.");
                 }
