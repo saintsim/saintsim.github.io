@@ -446,6 +446,7 @@ function updatePage(pageResponse) {
     else {
         hideBlock(umbrellaIcon);
     }
+    setElementBlock("currentHour", currentHour);
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
