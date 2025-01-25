@@ -395,6 +395,15 @@ function hideBlock(id) {
         currentElement.hidden = true;
     }
 }
+function updateGlobalRainDetails(block) {
+    if (block.precepitationPercHighest > 50) {
+        isUmbrellaNeeded = true;
+        rainTotalExpected += block.totalRainfall;
+    }
+    if (chanceOfRainPerc < block.precepitationPercHighest) {
+        chanceOfRainPerc = block.precepitationPercHighest;
+    }
+}
 function updateBlock(blockName, elementName, iconName, currentHour, response) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
     if (block.pastData) {
@@ -402,13 +411,7 @@ function updateBlock(blockName, elementName, iconName, currentHour, response) {
         hideBlock(iconName);
     }
     else {
-        if (block.precepitationPercHighest > 50) {
-            isUmbrellaNeeded = true;
-            rainTotalExpected += block.totalRainfall;
-        }
-        if (chanceOfRainPerc < block.precepitationPercHighest) {
-            chanceOfRainPerc = block.precepitationPercHighest;
-        }
+        updateGlobalRainDetails(block);
         const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`;
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
         const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
@@ -416,19 +419,18 @@ function updateBlock(blockName, elementName, iconName, currentHour, response) {
         document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
     }
 }
-function updatePage(pageResponse) {
-    const response = JSON.parse(pageResponse);
-    console.log(response);
-    const weatherCode = response.current.weather_code;
+function updateCurrentBlock(response, weatherCode) {
     setElementBlock("currentTemperature", `${response.current.temperature_2m}°C (${response.current.apparent_temperature}°C)`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
-    const currentHour = new Date().getHours();
-    // update the blocks
+}
+function updateDayBlocks(response, currentHour) {
     updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response);
     updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response);
     updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response);
+}
+function updateChanceOfRainBlock() {
     const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`;
     setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`);
     const umbrellaIcon = "umbrellaIcon";
@@ -438,6 +440,15 @@ function updatePage(pageResponse) {
     else {
         hideBlock(umbrellaIcon);
     }
+}
+function updatePage(pageResponse) {
+    const response = JSON.parse(pageResponse);
+    console.log(response);
+    const currentHour = new Date().getHours();
+    const weatherCode = response.current.weather_code;
+    updateCurrentBlock(response, weatherCode);
+    updateDayBlocks(response, currentHour);
+    updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour);
 }
 function getWeatherData() {

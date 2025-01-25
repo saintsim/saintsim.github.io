@@ -9,7 +9,7 @@ export let chanceOfRainPerc: number = 0
 export let isUmbrellaNeeded: boolean = false
 export let rainTotalExpected: number = 0
 
-interface TempBlock {
+interface TemperatureBlock {
     blockName: string;
     blockStartHour: number; // 24hr clock notation
     blockEndHour: number; // 24hr clock notation
@@ -56,7 +56,7 @@ function removePastHours(numbers: number[], current_hour: number): number[] {
     return numbers.filter(number => number >= current_hour);
 }
 
-function getTemperatureBlock(blockName: string, hourly_weather_data: any, current_hour: number): TempBlock {
+function getTemperatureBlock(blockName: string, hourly_weather_data: any, current_hour: number): TemperatureBlock {
     let hours = getHours(blockName);
 
     // remove past hours
@@ -111,6 +111,16 @@ function hideBlock(id: string) {
     }
 }
 
+function updateGlobalRainDetails(block: TemperatureBlock) {
+    if (block.precepitationPercHighest > 50) {
+        isUmbrellaNeeded = true
+        rainTotalExpected += block.totalRainfall
+    }
+    if(chanceOfRainPerc < block.precepitationPercHighest) {
+        chanceOfRainPerc = block.precepitationPercHighest
+    }
+}
+
 function updateBlock(blockName: string, elementName: string, iconName: string, currentHour: number, response: any) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
 
@@ -118,13 +128,7 @@ function updateBlock(blockName: string, elementName: string, iconName: string, c
         hideBlock(elementName);
         hideBlock(iconName);
     } else {
-        if (block.precepitationPercHighest > 50) {
-            isUmbrellaNeeded = true
-            rainTotalExpected += block.totalRainfall
-        }
-        if(chanceOfRainPerc < block.precepitationPercHighest) {
-            chanceOfRainPerc = block.precepitationPercHighest
-        }
+        updateGlobalRainDetails(block)
 
         const tempString = `${block.tempMin}°C (${block.tempFeelsLikeMin}°C) | ${block.tempMax}°C (${block.tempFeelsLikeMax}°C)`
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
@@ -135,24 +139,20 @@ function updateBlock(blockName: string, elementName: string, iconName: string, c
     }
 }
 
-function updatePage(pageResponse: string) {
-    const response = JSON.parse(pageResponse);
-    console.log(response);
-
-    const weatherCode: number = response.current.weather_code;
+function updateCurrentBlock(response: any, weatherCode: number) {
     setElementBlock("currentTemperature", `${response.current.temperature_2m}°C (${response.current.apparent_temperature}°C)`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
-
     (document.getElementById('currentWeatherIcon') as HTMLImageElement).src = getWeatherImage(weatherCode);
+}
 
-    const currentHour: number = new Date().getHours();
-
-    // update the blocks
+function updateDayBlocks(response: any, currentHour: number) {
     updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response)
     updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response)
     updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response)
+}
 
+function updateChanceOfRainBlock() {
     const chanceOfRainStr = `chance: ${chanceOfRainPerc}%`
     setElementBlock("carryUmbrealla", isUmbrellaNeeded ? `Carry an umbrella (${chanceOfRainStr})` : `No umbrella needed! (${chanceOfRainStr})`)
     const umbrellaIcon: string = "umbrellaIcon"
@@ -161,7 +161,19 @@ function updatePage(pageResponse: string) {
     } else {
         hideBlock(umbrellaIcon);
     }
+}
 
+function updatePage(pageResponse: string) {
+    const response = JSON.parse(pageResponse);
+    console.log(response);
+
+    const currentHour: number = new Date().getHours();
+    const weatherCode: number = response.current.weather_code;
+
+    updateCurrentBlock(response, weatherCode);
+    updateDayBlocks(response, currentHour);
+
+    updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour)
 }
 
