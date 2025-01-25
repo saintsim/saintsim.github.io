@@ -5,50 +5,50 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-      <script type="module" crossorigin src="./assets/index-CuzpEPOO.js"></script>
+      <script type="module" crossorigin src="./assets/index-DUBqP1yX.js"></script>
       <link rel="stylesheet" crossorigin href="./assets/index.css">
     </head>
 <body>
-<div id="title">Tokyo</div><br />
+<div id="title">Tokyo</div><div id="date" class="secondaryStyling"></div><br />
 <div id="time"></div>
-<div id="date"></div>
 <br />
 <!--Current temp hour:<span id="currentHour"></span><br />-->
 <div id="current_box">
     <div id="currentIconBox">
         <p><img id="currentWeatherIcon" src="" alt="Current Weather icon"></p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span id="currentConditions"></span></p>
     </div>
     <div id="currentConditionsBox">
-        <p><span id="currentTemperature" class="temperatureStyling"></span></p>
-        <p><b><span id="currentConditions"></span></b></p>
-        <span id="currentRain"></span>. <span id="carryUmbrealla"></span>
+        <p><span id="currentTemperature" class="strongStyling"></span>&nbsp;&nbsp;<span id="currentTemperatureFeelsLike" class="secondaryStyling"></span></p>
+        <p><span id="currentRain"></span></p>
+        <p><span id="carryUmbrealla"></span></p>
         <p><img id="umbrellaIcon" src="" alt="Umbrella icon"></p>
     </div>
 </div>
 <br />
 <div id="blocks">
     <div id="morning_box" class="boxProperties">
-        <div id="blockMorningTitle"></div>
+        <div id="blockMorningTitle" class="strongStyling"></div>
         <p><img id="morningWeatherIcon" src="" alt="Morning Weather icon"></p>
-        <div id="blockMorningTemp" class="temperatureStyling"></div><br />
-        <div id="blockMorningTempFeelsLike"></div><br />
+        <div id="blockMorningTemp" class="strongStyling"></div><br />
+        <div id="blockMorningTempFeelsLike" class="secondaryStyling"></div><br />
         <p><b><span id="blockMorningCurrentConditions"></span></b> | <span id="blockMorningCurrentRain"></span></p>
     </div>
 
     <div id="afternoon_box" class="boxProperties">
-        <div id="blockAfternoonTitle"></div>
+        <div id="blockAfternoonTitle" class="strongStyling"></div>
         <p><img id="afternoonWeatherIcon" src="" alt="Afternoon Weather icon"></p>
-        <div id="blockAfternoonTemp" class="temperatureStyling"></div><br />
-        <div id="blockAfternoonTempFeelsLike"></div><br />
+        <div id="blockAfternoonTemp" class="strongStyling"></div><br />
+        <div id="blockAfternoonTempFeelsLike" class="secondaryStyling"></div><br />
         <p><b><span id="blockAfternoonCurrentConditions"></span></b> | <span id="blockAfternoonCurrentRain"></span></p>
     </div>
 
     <div id="evening_box" class="boxProperties">
-        <div id="blockEveningTitle"></div>
+        <div id="blockEveningTitle" class="strongStyling"></div>
         <p><img id="eveningWeatherIcon" src="" alt="Evening Weather icon"></p>
-        <div id="blockEveningTemp" class="temperatureStyling"></div><br />
-        <div id="blockEveningTempFeelsLike"></div>
-        <p><b><span id="blockEveningCurrentConditions"></span></b></p>
+        <p><span id="blockEveningCurrentConditions"></span></p>
+        <div id="blockEveningTemp" class="strongStyling"></div><br />
+        <div id="blockEveningTempFeelsLike" class="secondaryStyling"></div>
         <p><span id="blockEveningCurrentRain"></span></p>
     </div>
 </div>
