@@ -95,17 +95,34 @@ const overCastIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYA
 
 const fogIcon = "data:image/png;base64,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";
 
-// class WeatherData {
-//     apiData: string;
-//     constructor(apiData: string) {
-//         this.apiData = apiData;
-//     }
-//     getTemperature() {
-//         const response = JSON.parse(this.apiData);
-//         console.log(response);
-//         return `Temperature: ${response.hourly.temperature_2m[0]}°C`;
-//     }
-// }
+const drizzleHeavyIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAC3klEQVR4nO3WQVPaQBjGcSgkwACGAt+Z5UOopYeKwYNK8WIpPaioB5XCR2A3DKLEAdQ4jW8nXJtO1sPWTvb5zTyn7Pxnb5tEAgAAAAAAAAAAAADgPzQiszqiemVIojoiCt2QeHVILDirXUe16tBn1eEryc1nunWUKw98Ufn5SjIrD3xHt45y5YHPK4NXkps/1q2jXPnGZ5Ubn2RWvvZrunXUG5FZvvLZx+tfvHy9vswfW3+78iMfvXIcOwAAAADwbkZkli69unXhidLlC4XNunjhpUsv8tcwlh3VSuceK128kNTOPaZbRzmr74nSeXCJ6Fl9z9Gto9xG3+NW3yOZbfS9sW4d5awzj1lnHkmupltHvRGZ1skT2zh95tbpM4Vt/e3kKfLRi2UHAAAAAN5sRGaxt6oXe4+i+OORQtd75MXeKvKXrhjHjmr53ooVeiuSWXBWt45yhe5KFL6vSGrdlaNbR7lCd8kL3fUlJLYc69ZRLn+8YPlvS5LboqZbRz2bzPVljxc8f7yk8AXfFiw4q10HAAAAAN6NTWbuyK1nO67IHT1Q2LIdl+c6D5G/hrHsqBZcINd5IMkx3TrKZdpzkf3qkswy7bmjW0e5TNvl2bZLMsscumPdOsplDl2WPXRJZpmDeU23jno2mZn9e2YezHnmYE5hW3/bv4989GLZAQAAAIA3s8k0WrO60boTxt4dhS3duuPG3izyl86IY0c1w54xozUjqdkzpltHOWN3Jgx7fQmZObp1lEvvTnl695ak1pyOdesol2pOWboZXCJ6qea0pltHPZvM1JcpS+9MeXrnlsI35cGZqEcvFccOAAAAALwbe2QmG5P6h4YjPnyeUOgaDk82Jiw4q11HteACycaEJMd06yiX3BYi+ckhuQlHt45yyW3Bk9sOSW3LGevWUW9TsMSWQ3ITNe06ygUPUHDZTcETm4L+Mr4+E/HoxbIDAAAAAAAAAAAAAJD4p34DO2tzbFuS2bYAAAAASUVORK5CYII=";
+
+const hailIcon = ""+new URL('images/icon-hail-96.png', import.meta.url).href+"";
+
+const rainCloudIcon = ""+new URL('images/icon-rain-cloud-96.png', import.meta.url).href+"";
+
+const rainCloudSunBehindIcon = ""+new URL('images/icon-rain-cloud-sunbehind-96.png', import.meta.url).href+"";
+
+const sleetIcon = ""+new URL('images/icon-sleet-96.png', import.meta.url).href+"";
+
+const wetIcon = "data:image/png;base64,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";
+
+const rainIcon = ""+new URL('images/icon-rain-96.png', import.meta.url).href+"";
+
+const heavyRainIcon = ""+new URL('images/icon-heavy-rain-96.png', import.meta.url).href+"";
+
+const torrentialRainIcon = ""+new URL('images/icon-torrential-rain-96.png', import.meta.url).href+"";
+
+const snowIcon = ""+new URL('images/icon-snow-96.png', import.meta.url).href+"";
+
+const snowStormIcon = "data:image/png;base64,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";
+
+const lightSnowIcon = ""+new URL('images/icon-light-snow-96.png', import.meta.url).href+"";
+
+const stormIcon = ""+new URL('images/icon-storm-96.png', import.meta.url).href+"";
+
+const stormyWeatherIcon = ""+new URL('images/icon-stormy-weather-96.png', import.meta.url).href+"";
+
 function getWeatherImage(weatherCode) {
     switch (weatherCode) {
         case 0: {
@@ -117,15 +134,112 @@ function getWeatherImage(weatherCode) {
             return mainlyClearIcon;
         }
         case 2: {
-            // 2 partly cloudy
+            // 2 Partly cloudy
             return partlyCloudyIcon;
         }
         case 3: {
-            // 3 overcast
+            // 3 Overcast
             return overCastIcon;
         }
-        default: {
+        case 45: {
+            // 45 Fog
             return fogIcon;
+        }
+        case 48: {
+            // 48 Depositing rime fog
+            return fogIcon;
+        }
+        case 51: {
+            // 51 Drizzle: Light
+            return rainCloudIcon;
+        }
+        case 53: {
+            // 53 Drizzle: Moderate
+            return rainCloudSunBehindIcon;
+        }
+        case 55: {
+            // 55 Drizzle: Dense intensity
+            return drizzleHeavyIcon;
+        }
+        case 56: {
+            // 56 Freezing Drizzle: Light
+            return sleetIcon;
+        }
+        case 57: {
+            // 57 Freezing Drizzle: Dense intensity
+            return wetIcon;
+        }
+        case 61: {
+            // 61 Rain: Slight
+            return rainIcon;
+        }
+        case 63: {
+            // 63 Rain: Moderate
+            return heavyRainIcon;
+        }
+        case 65: {
+            // 65 Rain: Heavy intensity
+            return torrentialRainIcon;
+        }
+        case 66: {
+            // 66 Freezing Rain: Light
+            return sleetIcon;
+        }
+        case 67: {
+            // 67 Freezing Rain: Heavy intensity
+            return hailIcon;
+        }
+        case 71: {
+            // 71 Snow fall: Slight
+            return sleetIcon;
+        }
+        case 73: {
+            // 73 Snow fall: Moderate
+            return snowIcon;
+        }
+        case 75: {
+            // 75 Snow fall: Heavy intensity
+            return snowStormIcon;
+        }
+        case 77: {
+            // 77 Snow grains
+            return snowStormIcon;
+        }
+        case 80: {
+            // 80 Rain showers: Slight
+            return rainIcon;
+        }
+        case 81: {
+            // 81 Rain showers: Moderate
+            return heavyRainIcon;
+        }
+        case 82: {
+            // 82 Rain showers: Violent
+            return torrentialRainIcon;
+        }
+        case 85: {
+            // 85 Snow showers: Slight
+            return lightSnowIcon;
+        }
+        case 86: {
+            // 86 Snow showers: Heavy
+            return snowStormIcon;
+        }
+        case 95: {
+            // 95 Thunderstorm: Slight or moderate
+            return stormIcon;
+        }
+        case 96: {
+            // 96 Thunderstorm with slight and heavy hail
+            return stormyWeatherIcon;
+        }
+        case 99: {
+            // 99 Thunderstorm: Heavy hail
+            return stormyWeatherIcon;
+        }
+        default: {
+            // Default case for unknown weather codes
+            return stormyWeatherIcon;
         }
     }
 }
@@ -191,6 +305,7 @@ function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
+
 function getTempBlock(blockName) {
     return {
         blockName: blockName,
