@@ -166,6 +166,8 @@ function updatePage(pageResponse: string) {
     } else {
         hideBlock(umbrellaIcon);
     }
+
+    setElementBlock("currentHour", currentHour)
 }
 
 function getWeatherData() {
