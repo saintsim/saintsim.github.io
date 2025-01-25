@@ -107,7 +107,7 @@ function setElementBlock(id: string, data: any) {
 function hideBlock(id: string) {
     const currentElement = document.getElementById(id);
     if (currentElement) {
-        currentElement.hidden = true;
+        currentElement.style.display = "none";
     }
 }
 
@@ -121,11 +121,11 @@ function updateGlobalRainDetails(block: TemperatureBlock) {
     }
 }
 
-function updateBlock(blockName: string, elementName: string, iconName: string, currentHour: number, response: any) {
+function updateBlock(blockName: string, elementName: string, boxName: string, iconName: string, currentHour: number, response: any) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
 
     if (block.pastData) {
-        hideBlock(elementName);
+        hideBlock(boxName);
         hideBlock(iconName);
     } else {
         updateGlobalRainDetails(block)
@@ -134,8 +134,10 @@ function updateBlock(blockName: string, elementName: string, iconName: string, c
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
         const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
 
-        setElementBlock(elementName, `${block.blockName} (${block.blockStartHour}-${block.blockEndHour}): ${tempString} / ${conditionsString} / ${percString}`);
+        setElementBlock(elementName + "Title", `${block.blockName} (${block.blockStartHour}-${block.blockEndHour})`);
         (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
+        setElementBlock(elementName + "Temp", `${tempString}`);
+        setElementBlock(elementName, `${conditionsString} | ${percString}`);
     }
 }
 
@@ -147,9 +149,9 @@ function updateCurrentBlock(response: any, weatherCode: number) {
 }
 
 function updateDayBlocks(response: any, currentHour: number) {
-    updateBlock(morningBlockName, "blockMorning", 'morningWeatherIcon', currentHour, response)
-    updateBlock(afternoonBlockName, "blockAfternoon", 'afternoonWeatherIcon', currentHour, response)
-    updateBlock(eveningBlockName, "blockEvening", 'eveningWeatherIcon', currentHour, response)
+    updateBlock(morningBlockName, "blockMorning", "morning_box", 'morningWeatherIcon', currentHour, response)
+    updateBlock(afternoonBlockName, "blockAfternoon", "afternoon_box", 'afternoonWeatherIcon', currentHour, response)
+    updateBlock(eveningBlockName, "blockEvening", "evening_box", 'eveningWeatherIcon', currentHour, response)
 }
 
 function updateChanceOfRainBlock() {
