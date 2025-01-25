@@ -16,35 +16,41 @@
 <br />
 <!--Current temp hour:<span id="currentHour"></span><br />-->
 <div id="current_box">
-    <p><img id="currentWeatherIcon" src="" alt="Current Weather icon"></p>
-    <p><span id="currentTemperature"></span></p>
-    <p><b><span id="currentConditions"></span></b> | <span id="currentRain"></span></p>
-    <span id="carryUmbrealla"></span>
-    <p><img id="umbrellaIcon" src="" alt="Umbrella icon"></p>
+    <div id="currentIconBox">
+        <p><img id="currentWeatherIcon" src="" alt="Current Weather icon"></p>
+    </div>
+    <div id="currentConditionsBox">
+        <p><span id="currentTemperature" class="temperatureStyling"></span></p>
+        <p><b><span id="currentConditions"></span></b> | <span id="currentRain"></span></p>
+        <span id="carryUmbrealla"></span>
+        <p><img id="umbrellaIcon" src="" alt="Umbrella icon"></p>
+    </div>
 </div>
-<br /><br />
-<div id="morning_box" class="boxProperties">
-    <div id="blockMorningTitle"></div>
-    <p><img id="morningWeatherIcon" src="" alt="Morning Weather icon"></p>
-    <div id="blockMorningTemp"></div><br />
-    <div id="blockMorningTempFeelsLike"></div><br />
-    <p><b><span id="blockMorningCurrentConditions"></span></b> | <span id="blockMorningCurrentRain"></span></p>
-</div>
+<br />
+<div id="blocks">
+    <div id="morning_box" class="boxProperties">
+        <div id="blockMorningTitle"></div>
+        <p><img id="morningWeatherIcon" src="" alt="Morning Weather icon"></p>
+        <div id="blockMorningTemp" class="temperatureStyling"></div><br />
+        <div id="blockMorningTempFeelsLike"></div><br />
+        <p><b><span id="blockMorningCurrentConditions"></span></b> | <span id="blockMorningCurrentRain"></span></p>
+    </div>
 
-<div id="afternoon_box" class="boxProperties">
-    <div id="blockAfternoonTitle"></div>
-    <p><img id="afternoonWeatherIcon" src="" alt="Afternoon Weather icon"></p>
-    <div id="blockAfternoonTemp"></div><br />
-    <div id="blockAfternoonTempFeelsLike"></div><br />
-    <p><b><span id="blockAfternoonCurrentConditions"></span></b> | <span id="blockAfternoonCurrentRain"></span></p>
-</div>
+    <div id="afternoon_box" class="boxProperties">
+        <div id="blockAfternoonTitle"></div>
+        <p><img id="afternoonWeatherIcon" src="" alt="Afternoon Weather icon"></p>
+        <div id="blockAfternoonTemp" class="temperatureStyling"></div><br />
+        <div id="blockAfternoonTempFeelsLike"></div><br />
+        <p><b><span id="blockAfternoonCurrentConditions"></span></b> | <span id="blockAfternoonCurrentRain"></span></p>
+    </div>
 
-<div id="evening_box" class="boxProperties">
-    <div id="blockEveningTitle"></div>
-    <p><img id="eveningWeatherIcon" src="" alt="Evening Weather icon"></p>
-    <div id="blockEveningTemp"></div><br />
-    <div id="blockEveningTempFeelsLike"></div>
-    <p><b><span id="blockEveningCurrentConditions"></span></b> | <span id="blockEveningCurrentRain"></span></p>
+    <div id="evening_box" class="boxProperties">
+        <div id="blockEveningTitle"></div>
+        <p><img id="eveningWeatherIcon" src="" alt="Evening Weather icon"></p>
+        <div id="blockEveningTemp" class="temperatureStyling"></div><br />
+        <div id="blockEveningTempFeelsLike"></div>
+        <p><b><span id="blockEveningCurrentConditions"></span></b> | <span id="blockEveningCurrentRain"></span></p>
+    </div>
 </div>
 <br /><br />
 </body>
