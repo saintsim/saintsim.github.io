@@ -131,7 +131,7 @@ function updateChanceOfRainBlock() {
     //if (isUmbrellaNeeded) {
     if (true) {
         //(document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
-        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(true);
+        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(false);
     }
     else {
         hideBlock(umbrellaIcon);
