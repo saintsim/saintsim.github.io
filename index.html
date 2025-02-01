@@ -6,27 +6,23 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-      <script type="module" crossorigin src="./assets/index-DKwh14Kz.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=thermometer" rel="stylesheet" />
+      <script type="module" crossorigin src="./assets/index-qA2G-S5M.js"></script>
       <link rel="stylesheet" crossorigin href="./assets/index.css">
     </head>
 <body>
+<div id="top-bar"></div>
 <div id="header">
+    <div id="currentIconBox" class="current-box-margins">
+        <img id="currentWeatherIcon" src="" width="106px" alt="Current Weather icon"><br />
+        <p>&nbsp;<span id="currentConditions" class="current-large-txt"></span></p>
+    </div>
     <div id="dateTime">
         <div id="time"></div>
         <div id="date" class="secondaryStyling"></div>
-    </div>
-    <div id="title">Tokyo</div>
-</div>
-<br />
-<!--Current temp hour:<span id="currentHour"></span><br />-->
-<div id="current_box">
-    <div id="currentIconBox" class="current-box-margins">
-        <p><img id="currentWeatherIcon" src="" width="96px" alt="Current Weather icon"></p>
-        <p>&nbsp;<span id="currentConditions" class="current-large-txt"></span></p>
-    </div>
-    <div id="currentTemperatureBox"  class="current-box-margins">
-        <p><span id="currentTemperature" class="strongStyling current-large-txt"></span></p>
-        <p><span id="currentTemperatureFeelsLike" class="secondaryStyling"></span></p>
+        <div id="currentTemperatureBox" class="current-box-margins">
+            <span class="material-symbols-outlined therm-size">thermometer</span><span id="currentTemperatureFeelsLike" class="strongStyling current-large-txt"></span>
+        </div>
     </div>
     <div id="currentRainBox" class="current-box-margins">
         <span id="currentRain"></span><br /><br /><span class="material-icons-outlined secondaryStyling">water_drop</span>
@@ -36,13 +32,13 @@
         <p><img id="umbrellaIcon" src="" alt="Umbrella icon"></p>
     </div>
 </div>
+<br />
 <div id="blocks">
     <div id="morning_box" class="boxProperties">
         <div id="blockMorningTitle" class="strongStyling"></div>
         <p><img id="morningWeatherIcon" src="" width="80px" alt="Morning Weather icon"></p>
         <p><span id="blockMorningCurrentConditions"></span></p>
-        <p><span id="blockMorningTempMin" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockMorningTempMax" class="strongStyling"></span></p>
-        <p><span id="blockMorningTempMinFeelsLike" class="secondaryStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockMorningTempMaxFeelsLike" class="secondaryStyling"></span></p><br />
+        <p><span id="blockMorningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockMorningTempMaxFeelsLike" class="strongStyling"></span></p><br />
         <p><span id="blockMorningCurrentRain"></span></p>
     </div>
 
@@ -50,8 +46,7 @@
         <div id="blockAfternoonTitle" class="strongStyling"></div>
         <p><img id="afternoonWeatherIcon" src="" width="80px" alt="Afternoon Weather icon"></p>
         <p><span id="blockAfternoonCurrentConditions"></span></p>
-        <span id="blockAfternoonTempMin" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockAfternoonTempMax" class="strongStyling"></span><br />
-        <p><span id="blockAfternoonTempMinFeelsLike" class="secondaryStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockAfternoonTempMaxFeelsLike" class="secondaryStyling"></span></p><br />
+        <p><span id="blockAfternoonTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockAfternoonTempMaxFeelsLike" class="strongStyling"></span></p><br />
         <p><span id="blockAfternoonCurrentRain"></span></p>
     </div>
 
@@ -59,8 +54,7 @@
         <div id="blockEveningTitle" class="strongStyling"></div>
         <p><img id="eveningWeatherIcon" src="" width="80px" alt="Evening Weather icon"></p>
         <p><span id="blockEveningCurrentConditions"></span></p>
-        <span id="blockEveningTempMin" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockEveningTempMax" class="strongStyling"></span><br />
-        <p><span id="blockEveningTempMinFeelsLike" class="secondaryStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockEveningTempMaxFeelsLike" class="secondaryStyling"></span></p><br />
+        <p><span id="blockEveningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockEveningTempMaxFeelsLike" class="strongStyling"></span></p><br />
         <p><span id="blockEveningCurrentRain"></span></p>
     </div>
 </div>
