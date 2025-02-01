@@ -13,8 +13,6 @@ interface TemperatureBlock {
     blockName: string;
     blockStartHour: number; // 24hr clock notation
     blockEndHour: number; // 24hr clock notation
-    tempMin: number;
-    tempMax: number;
     tempFeelsLikeMin: number;
     tempFeelsLikeMax: number;
     precepitationPercHighest: number;
@@ -66,7 +64,6 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
 
     // assume we always have a 24hrs array of numbers in the hourly_weather_data, therefore indices match hours
     // a bunch of the weather elements are for previous hour
-    const tempByHour: number[] = getWeatherElementForHours(hourly_weather_data.temperature_2m, hours, false)
     const tempFeelsLikeByHour: number[] = getWeatherElementForHours(hourly_weather_data.apparent_temperature, hours, false)
     const precepitationPercByHour: number[] = getWeatherElementForHours(hourly_weather_data.precipitation_probability, hours, true)
     const rainfallByHour: number[] = getWeatherElementForHours(hourly_weather_data.rain, hours, true)
@@ -79,8 +76,6 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
         blockName: blockName,
         blockStartHour: hours.length === 0 ? 0 : hours[0], // 24hr clock notation
         blockEndHour: lastHour, // 24hr clock notation
-        tempMin: tempByHour.length === 0 ? 0 : Math.round(Math.min(...tempByHour)),
-        tempMax: tempByHour.length === 0 ? 0 : Math.round(Math.max(...tempByHour)),
         tempFeelsLikeMin: tempFeelsLikeByHour.length === 0 ? 0 : Math.round(Math.min(...tempFeelsLikeByHour)),
         tempFeelsLikeMax: tempFeelsLikeByHour.length === 0 ? 0 : Math.round(Math.max(...tempFeelsLikeByHour)),
         precepitationPercHighest: precepitationPercByHour.length === 0 ? 0 : Math.max(...precepitationPercByHour),
@@ -132,8 +127,6 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
     } else {
         updateGlobalRainDetails(block)
 
-        const tempMinString = `${block.tempMin}°C`
-        const tempMaxString = `${block.tempMax}°C`
         const tempMinFeelsLikeString = `${block.tempFeelsLikeMin}°C`
         const tempMaxFeelsLikeString = `${block.tempFeelsLikeMax}°C`
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
@@ -141,8 +134,6 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
 
         setElementBlock(elementName + "Title", `${block.blockName}`);
         (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
-        setElementBlock(elementName + "TempMin", `${tempMinString}`);
-        setElementBlock(elementName + "TempMax", `${tempMaxString}`);
         setElementBlock(elementName + "TempMinFeelsLike", `${tempMinFeelsLikeString}`);
         setElementBlock(elementName + "TempMaxFeelsLike", `${tempMaxFeelsLikeString}`);
         setElementBlock(elementName + "CurrentConditions", `${conditionsString}`);
@@ -151,8 +142,7 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
 }
 
 function updateCurrentBlock(response: any, weatherCode: number) {
-    setElementBlock("currentTemperature", `${Math.round(response.current.temperature_2m)}°C`);
-    setElementBlock("currentTemperatureFeelsLike", `${Math.round(response.current.apparent_temperature)}°C`);
+    setElementBlock("currentTemperatureFeelsLike", `${Math.round(response.current.apparent_temperature)} °C`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
     setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     (document.getElementById('currentWeatherIcon') as HTMLImageElement).src = getWeatherImage(weatherCode);

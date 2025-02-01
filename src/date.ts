@@ -19,7 +19,7 @@ function updateDate() {
     const month = now.toLocaleString('default', { month: 'long' });
     const dateElement = document.getElementById('date');
     if (dateElement) {
-        dateElement.innerHTML = `${currentDayOfWeek} ${dayOfMonth} ${month} ${now.getFullYear()}`;
+        dateElement.innerHTML = `${currentDayOfWeek} ${dayOfMonth} ${month}`;
     }
 }
 
