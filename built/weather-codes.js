@@ -19,6 +19,7 @@ import stormIcon from '../public/assets/images/icon-storm-96.png';
 import stormyWeatherIcon from '../public/assets/images/icon-stormy-weather-96.png';
 import umbrellaIcon from '../public/assets/images/icon-umbrella-80.png';
 import umbrellaClosedIcon from '../public/assets/images/icon-closed-umbrella-80.png';
+import umbrellaClosedGreyIcon from '../public/assets/images/icon-closed-umbrella-grey-80.png';
 export function getWeatherImage(weatherCode) {
     switch (weatherCode) {
         case 0: {
@@ -201,8 +202,14 @@ export function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
-export function getUmbrellaIcon(rainingHard) {
-    return rainingHard ? umbrellaIcon : umbrellaClosedIcon;
+export function getUmbrellaIcon(rainAmount) {
+    if (rainAmount > 20) {
+        return umbrellaIcon;
+    }
+    if (rainAmount > 0) {
+        return umbrellaClosedIcon;
+    }
+    return umbrellaClosedGreyIcon;
 }
 export function getWorstWeatherCode(weatherCodes) {
     return Math.max(...weatherCodes);

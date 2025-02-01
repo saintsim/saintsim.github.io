@@ -62,10 +62,24 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
     };
 }
 function getCurrentChanceOfRain(percentageChance, now) {
-    if (percentageChance === 0)
-        return now ? "No Rain" : "No Rain expected";
+    if (now) {
+        if (percentageChance === 0)
+            return "No Rain";
+        if (percentageChance < 40)
+            return "Rain unlikely";
+        if (percentageChance < 60)
+            return "Rain likely";
+        if (percentageChance < 90)
+            return "Rain v likely";
+        else
+            return "Will rain";
+    }
     else {
-        return `${percentageChance}% chance of rain`;
+        if (percentageChance === 0)
+            return "No Rain expected";
+        else {
+            return `${percentageChance}% chance of rain`;
+        }
     }
 }
 function setElementBlock(id, data) {
@@ -124,12 +138,7 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`;
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
-    if (isUmbrellaNeeded) {
-        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
-    }
-    else {
-        hideBlock(umbrellaIcon);
-    }
+    document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected);
 }
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);

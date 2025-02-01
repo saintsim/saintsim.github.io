@@ -87,10 +87,23 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
 }
 
 function getCurrentChanceOfRain(percentageChance: number, now: boolean): string {
-    if (percentageChance === 0 )
-        return now ? "No Rain" : "No Rain expected";
-    else {
-        return `${percentageChance}% chance of rain`
+    if (now) {
+        if (percentageChance === 0 )
+            return "No Rain"
+        if (percentageChance < 40 )
+            return "Rain unlikely"
+        if (percentageChance < 60 )
+            return "Rain likely"
+        if (percentageChance < 90 )
+            return "Rain v likely"
+        else
+            return "Will rain"
+    } else {
+        if (percentageChance === 0 )
+            return "No Rain expected";
+        else {
+            return `${percentageChance}% chance of rain`
+        }
     }
 }
 
@@ -158,11 +171,7 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`)
     const umbrellaIcon: string = "umbrellaIcon";
-    if (isUmbrellaNeeded) {
-        (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected > 10);
-    } else {
-        hideBlock(umbrellaIcon);
-    }
+    (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected);
 }
 
 function updatePage(pageResponse: string) {

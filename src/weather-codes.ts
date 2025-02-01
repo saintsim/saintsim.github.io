@@ -20,6 +20,7 @@ import stormyWeatherIcon from '../public/assets/images/icon-stormy-weather-96.pn
 
 import umbrellaIcon from '../public/assets/images/icon-umbrella-80.png'
 import umbrellaClosedIcon from '../public/assets/images/icon-closed-umbrella-80.png'
+import umbrellaClosedGreyIcon from '../public/assets/images/icon-closed-umbrella-grey-80.png'
 
 export function getWeatherImage(weatherCode: number): string {
     switch (weatherCode) {
@@ -205,8 +206,14 @@ export function getWeatherDescription(weatherCode: number): string {
     }
 }
 
-export function getUmbrellaIcon(rainingHard: boolean): string {
-    return rainingHard ? umbrellaIcon : umbrellaClosedIcon;
+export function getUmbrellaIcon(rainAmount: number): string {
+    if (rainAmount > 20) {
+        return umbrellaIcon;
+    }
+    if (rainAmount > 0) {
+        return umbrellaClosedIcon;
+    }
+    return umbrellaClosedGreyIcon;
 }
 
 export function getWorstWeatherCode(weatherCodes: number[]): number {

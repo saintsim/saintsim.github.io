@@ -38,13 +38,6 @@ body {
     font-feature-settings: 'liga';
   }
 
-body .material-symbols-outlined.therm-size {
-    font-size: 100px;
-    color: #4E78A5;
-    float: left;
-    width: 100px;
-}
-
 #top-bar {
     width: 100%;
     height: 30px;
@@ -62,13 +55,8 @@ body .material-symbols-outlined.therm-size {
     flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
-#heading-left {
+#currentIconBox {
     float: left;
-}
-
-#date {
-    margin-top: 10px;
-    text-align: center;
 }
 
 #dateTime {
@@ -86,12 +74,8 @@ body .material-symbols-outlined.therm-size {
       font-size: 30px;
 }
 
-#current_box {
-    padding-left: 10px;
-    margin-left: 80px;
-    margin-right: auto;
-    float: left;
-    font-size: 20px;
+#date {
+    margin-top: 10px;
     text-align: center;
 }
 
@@ -105,19 +89,48 @@ body .material-symbols-outlined.therm-size {
     align-items: center; /* Vertically center items */
 }
 
+body .material-symbols-outlined.therm-size {
+    font-size: 100px;
+    color: #4E78A5;
+    float: left;
+    width: 100px;
+}
+
 #currentTemperatureFeelsLike {
     margin-left: 5px; /* Add spacing between icon and text */
     margin-top: 30px;
 }
 
-.current-box-margins {
-    margin-left: 60px;
-    margin-right: 60px;
+#rainCircle {
+    background: #4F4A4A;
+    border-radius: 50%;
+    opacity: 90%;;
+    width: 120px;
+    height: 120px;
+    float: left;
+    padding: 5px;
+}
+
+#umbrellaIcon {
+    margin-left: 20px;
+    margin-top: 20px;
 }
 
 #currentRainBox {
     float: left;
-    margin-top: 50px;
+    margin-top: 10px;
+    margin-right: 150px;
+}
+
+#currentRainDescription {
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.current-box-margins {
+    margin-left: 60px;
+    margin-right: 60px;
 }
 
 .strongStyling {
@@ -129,19 +142,12 @@ body .material-symbols-outlined.therm-size {
     font-size: 20px;    color: #BEBEC5;
 }
 
+.current-medium-txt {
+    font-size: 25px;
+}
+
 .current-large-txt {
     font-size: 45px;
-}
-
-#currentConditionsBox {
-    padding-left: 30px;
-    padding-right: 30px;
-    float: left;
-    margin-top: 30px;
-}
-
-#currentIconBox {
-    float: left;
 }
 
 .boxProperties {
