@@ -126,6 +126,8 @@ const umbrellaIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYA
 
 const umbrellaClosedIcon = "data:image/png;base64,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";
 
+const umbrellaClosedGreyIcon = "data:image/png;base64,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";
+
 function getWeatherImage(weatherCode) {
     switch (weatherCode) {
         case 0: {
@@ -308,8 +310,14 @@ function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
-function getUmbrellaIcon(rainingHard) {
-    return rainingHard ? umbrellaIcon : umbrellaClosedIcon;
+function getUmbrellaIcon(rainAmount) {
+    if (rainAmount > 20) {
+        return umbrellaIcon;
+    }
+    if (rainAmount > 0) {
+        return umbrellaClosedIcon;
+    }
+    return umbrellaClosedGreyIcon;
 }
 function getWorstWeatherCode(weatherCodes) {
     return Math.max(...weatherCodes);
@@ -319,7 +327,6 @@ const morningBlockName = "Morning";
 const afternoonBlockName = "Afternoon";
 const eveningBlockName = "Evening";
 let chanceOfRainPerc = 0;
-let isUmbrellaNeeded = false;
 let rainTotalExpected = 0;
 function getHours(blockName) {
     switch (blockName) {
@@ -370,10 +377,24 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
     };
 }
 function getCurrentChanceOfRain(percentageChance, now) {
-    if (percentageChance === 0)
-        return now ? "No Rain" : "No Rain expected";
+    if (now) {
+        if (percentageChance === 0)
+            return "No Rain";
+        if (percentageChance < 40)
+            return "Rain unlikely";
+        if (percentageChance < 60)
+            return "Rain likely";
+        if (percentageChance < 90)
+            return "Rain v likely";
+        else
+            return "Will rain";
+    }
     else {
-        return `${percentageChance}% chance of rain`;
+        if (percentageChance === 0)
+            return "No Rain expected";
+        else {
+            return `${percentageChance}% chance of rain`;
+        }
     }
 }
 function setElementBlock(id, data) {
@@ -382,15 +403,8 @@ function setElementBlock(id, data) {
         currentElement.textContent = data;
     }
 }
-function hideBlock(id) {
-    const currentElement = document.getElementById(id);
-    if (currentElement) {
-        currentElement.style.display = "none";
-    }
-}
 function updateGlobalRainDetails(block) {
     if (block.precepitationPercHighest > 50) {
-        isUmbrellaNeeded = true;
         rainTotalExpected += block.totalRainfall;
     }
     if (chanceOfRainPerc < block.precepitationPercHighest) {
@@ -428,12 +442,7 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`;
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
-    if (isUmbrellaNeeded) {
-        document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected > 10);
-    }
-    else {
-        hideBlock(umbrellaIcon);
-    }
+    document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected);
 }
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);
