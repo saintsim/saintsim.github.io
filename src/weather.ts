@@ -1,5 +1,6 @@
 import { weatherConfig } from './config';
 import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes'
+import { updateOutfitOptions } from './outfit'
 
 export const morningBlockName: string = "Morning"
 export const afternoonBlockName: string = "Afternoon"
@@ -8,6 +9,7 @@ export const eveningBlockName: string = "Evening"
 export let chanceOfRainPerc: number = 0
 export let isUmbrellaNeeded: boolean = false
 export let rainTotalExpected: number = 0
+export let minTemperature: number = 100
 
 interface TemperatureBlock {
     blockName: string;
@@ -130,6 +132,10 @@ function updateGlobalRainDetails(block: TemperatureBlock) {
     if(chanceOfRainPerc < block.precepitationPercHighest) {
         chanceOfRainPerc = block.precepitationPercHighest
     }
+
+    if (minTemperature > block.tempFeelsLikeMin) {
+        minTemperature = block.tempFeelsLikeMin
+    }
 }
 
 function updateBlock(blockName: string, elementName: string, boxName: string, iconName: string, currentHour: number, response: any) {
@@ -187,6 +193,8 @@ function updatePage(pageResponse: string) {
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour)
     setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
+
+    updateOutfitOptions(minTemperature, chanceOfRainPerc);
 }
 
 function getWeatherData() {

@@ -323,11 +323,72 @@ function getWorstWeatherCode(weatherCodes) {
     return Math.max(...weatherCodes);
 }
 
+function setElementTextColour(id, data) {
+    const currentElement = document.getElementById(id);
+    if (currentElement) {
+        currentElement.style.color = data;
+    }
+}
+const activeColour = '#ffffff';
+const inactiveColour = '#4E78A5';
+function setOutfitColour(outfitShorts, outfitTrousers, outfitJumper, outfitLightJacket, outfitBigCoat, outfitScarf, outfitHatGloves, outfitUmbrella) {
+    setElementTextColour("outfit-shorts", outfitShorts);
+    setElementTextColour("outfit-trousers", outfitTrousers);
+    setElementTextColour("outfit-jumper", outfitJumper);
+    setElementTextColour("outfit-light-jacket", outfitLightJacket);
+    setElementTextColour("outfit-big-coat", outfitBigCoat);
+    setElementTextColour("outfit-scarf", outfitScarf);
+    setElementTextColour("outfit-hat-gloves", outfitHatGloves);
+    setElementTextColour("outfit-umbrella", outfitUmbrella);
+}
+function updateOutfitOptions(minTemeperature, chanceOfRainPerc) {
+    var outfitShorts = inactiveColour;
+    var outfitTrousers = inactiveColour;
+    var outfitJumper = inactiveColour;
+    var outfitLightJacket = inactiveColour;
+    var outfitBigCoat = inactiveColour;
+    var outfitScarf = inactiveColour;
+    var outfitHatGloves = inactiveColour;
+    var outfitUmbrella = inactiveColour;
+    if (minTemeperature < 1) {
+        outfitTrousers = activeColour;
+        outfitJumper = activeColour;
+        outfitBigCoat = activeColour;
+        outfitScarf = activeColour;
+        outfitHatGloves = activeColour;
+    }
+    else if (minTemeperature < 6) {
+        outfitTrousers = activeColour;
+        outfitJumper = activeColour;
+        outfitBigCoat = activeColour;
+    }
+    else if (minTemeperature < 11) {
+        outfitTrousers = activeColour;
+        outfitJumper = activeColour;
+        outfitLightJacket = activeColour;
+    }
+    else if (minTemeperature < 16) {
+        outfitTrousers = activeColour;
+        outfitJumper = activeColour;
+    }
+    else if (minTemeperature < 25) {
+        outfitTrousers = activeColour;
+    }
+    else {
+        outfitShorts = activeColour;
+    }
+    if (chanceOfRainPerc > 0) {
+        outfitUmbrella = activeColour;
+    }
+    setOutfitColour(outfitShorts, outfitTrousers, outfitJumper, outfitLightJacket, outfitBigCoat, outfitScarf, outfitHatGloves, outfitUmbrella);
+}
+
 const morningBlockName = "Morning";
 const afternoonBlockName = "Afternoon";
 const eveningBlockName = "Evening";
 let chanceOfRainPerc = 0;
 let rainTotalExpected = 0;
+let minTemperature = 100;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -411,6 +472,9 @@ function updateGlobalRainDetails(block) {
     if (chanceOfRainPerc < block.precepitationPercHighest) {
         chanceOfRainPerc = block.precepitationPercHighest;
     }
+    if (minTemperature > block.tempFeelsLikeMin) {
+        minTemperature = block.tempFeelsLikeMin;
+    }
 }
 function updateBlock(blockName, elementName, boxName, iconName, currentHour, response) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
@@ -454,6 +518,7 @@ function updatePage(pageResponse) {
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour);
     setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
+    updateOutfitOptions(minTemperature, chanceOfRainPerc);
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo

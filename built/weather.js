@@ -1,11 +1,13 @@
 import { weatherConfig } from './config';
 import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes';
+import { updateOutfitOptions } from './outfit';
 export const morningBlockName = "Morning";
 export const afternoonBlockName = "Afternoon";
 export const eveningBlockName = "Evening";
 export let chanceOfRainPerc = 0;
 export let isUmbrellaNeeded = false;
 export let rainTotalExpected = 0;
+export let minTemperature = 100;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -103,6 +105,9 @@ function updateGlobalRainDetails(block) {
     if (chanceOfRainPerc < block.precepitationPercHighest) {
         chanceOfRainPerc = block.precepitationPercHighest;
     }
+    if (minTemperature > block.tempFeelsLikeMin) {
+        minTemperature = block.tempFeelsLikeMin;
+    }
 }
 function updateBlock(blockName, elementName, boxName, iconName, currentHour, response) {
     const block = getTemperatureBlock(blockName, response.hourly, currentHour);
@@ -150,6 +155,7 @@ function updatePage(pageResponse) {
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour);
     setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
+    updateOutfitOptions(minTemperature, chanceOfRainPerc);
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
