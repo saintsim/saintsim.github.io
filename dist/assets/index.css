@@ -97,6 +97,10 @@ body .material-symbols-outlined.therm-size {
 #currentTemperatureBox {
     margin-top: 30px;
     display: flex; /* Use Flexbox for alignment */
+    flex-wrap: wrap; /* Prevents overflow */
+    width: 100%;
+    max-width: 100vw; /* Constrains to viewport width */
+    overflow: hidden; /* Prevents horizontal scroll */
     align-items: center; /* Vertically center items */
 }
 
