@@ -156,7 +156,8 @@ body .material-symbols-outlined.therm-size {
 }
 
 .secondaryStyling {
-    font-size: 20px;    color: #BEBEC5;
+    font-size: 20px;
+    color: #BEBEC5;
 }
 
 .current-medium-txt {
@@ -164,7 +165,7 @@ body .material-symbols-outlined.therm-size {
 }
 
 .current-large-txt {
-    font-size: 45px;
+    font-size: 35px;
 }
 
 .grey-txt {
@@ -193,6 +194,10 @@ hr.weather-divide {
 
 .outfitBoxProperties {
     width: 250px;
+}
+
+.scheduleBoxProperties {
+    width: 100px
 }
 
 #blocks {
