@@ -42,6 +42,7 @@ body .material-symbols-outlined.therm-size {
     font-size: 100px;
     color: #4E78A5;
     float: left;
+    width: 100px;
 }
 
 #top-bar {
