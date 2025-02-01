@@ -25,40 +25,59 @@
             <span class="material-symbols-outlined therm-size">thermometer</span><span id="currentTemperatureFeelsLike" class="strongStyling current-large-txt"></span>
         </div>
     </div>
-    <div id="currentRainBox">
+    <div id="todayRainBox">
         <div id="rainCircle"><img id="umbrellaIcon" src="" alt="Umbrella icon"></div>
-        <div id="currentRainDescription">
+        <div id="todayRainDescription">
             <b><span id="carryUmbrealla" class="strongStyling current-large-txt"></span></b>
             <br /><br />
-            <span id="currentRain" class="current-medium-txt"></span>
+            <span id="todayRain" class="current-medium-txt"></span>
         </div>
 
     </div>
 </div>
 <br />
 <div id="blocks">
-    <div id="morning_box" class="boxProperties">
-        <div id="blockMorningTitle" class="strongStyling"></div>
-        <p><img id="morningWeatherIcon" src="" width="80px" alt="Morning Weather icon"></p>
-        <p><span id="blockMorningCurrentConditions"></span></p>
-        <p><span id="blockMorningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockMorningTempMaxFeelsLike" class="strongStyling"></span></p><br />
-        <p><span id="blockMorningCurrentRain"></span></p>
+    <div id="weather_box" class="boxProperties">
+        <div class="weather-block">
+            <div class="weather-block-conditions">
+                <p><img id="morningWeatherIcon" src="" width="60px" alt="Morning Weather icon"></p>
+                <p><span id="blockMorningCurrentConditions"></span></p>
+            </div>
+            <div class="weather-block-temp">
+                <p><span id="blockMorningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockMorningTempMaxFeelsLike" class="strongStyling"></span></p>
+                <p class="topmargin"><span id="blockMorningCurrentRain" class="grey-txt"></span></p>
+            </div>
+        </div>
+        <hr class="weather-divide" />
+        <div class="weather-block">
+            <div class="weather-block-conditions">
+                <p><img id="afternoonWeatherIcon" src="" width="60px" alt="Afternoon Weather icon"></p>
+                <p><span id="blockAfternoonCurrentConditions"></span></p>
+            </div>
+            <div class="weather-block-temp">
+                <p><span id="blockAfternoonTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockAfternoonTempMaxFeelsLike" class="strongStyling"></span></p>
+                <p class="topmargin"><span id="blockAfternoonCurrentRain" class="grey-txt"></span></p>
+            </div>
+        </div>
+        <hr class="weather-divide" />
+        <div class="weather-block">
+            <div class="weather-block-conditions">
+                <p><img id="eveningWeatherIcon" src="" width="60px" alt="Evening Weather icon"></p>
+                <p><span id="blockEveningCurrentConditions"></span></p>
+            </div>
+            <div class="weather-block-temp">
+                <p><span id="blockEveningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockEveningTempMaxFeelsLike" class="strongStyling"></span></p>
+                <p class="topmargin"><span id="blockEveningCurrentRain" class="grey-txt"></span></p>
+            </div>
+        </div>
     </div>
 
     <div id="afternoon_box" class="boxProperties">
-        <div id="blockAfternoonTitle" class="strongStyling"></div>
-        <p><img id="afternoonWeatherIcon" src="" width="80px" alt="Afternoon Weather icon"></p>
-        <p><span id="blockAfternoonCurrentConditions"></span></p>
-        <p><span id="blockAfternoonTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockAfternoonTempMaxFeelsLike" class="strongStyling"></span></p><br />
-        <p><span id="blockAfternoonCurrentRain"></span></p>
+
     </div>
 
     <div id="evening_box" class="boxProperties">
-        <div id="blockEveningTitle" class="strongStyling"></div>
-        <p><img id="eveningWeatherIcon" src="" width="80px" alt="Evening Weather icon"></p>
-        <p><span id="blockEveningCurrentConditions"></span></p>
-        <p><span id="blockEveningTempMinFeelsLike" class="strongStyling"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="blockEveningTempMaxFeelsLike" class="strongStyling"></span></p><br />
-        <p><span id="blockEveningCurrentRain"></span></p>
+
     </div>
 </div>
 </body>

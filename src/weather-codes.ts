@@ -206,11 +206,11 @@ export function getWeatherDescription(weatherCode: number): string {
     }
 }
 
-export function getUmbrellaIcon(rainAmount: number): string {
-    if (rainAmount > 20) {
+export function getUmbrellaIcon(rainPercChance: number): string {
+    if (rainPercChance > 50) {
         return umbrellaIcon;
     }
-    if (rainAmount > 0) {
+    if (rainPercChance > 0) {
         return umbrellaClosedIcon;
     }
     return umbrellaClosedGreyIcon;

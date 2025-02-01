@@ -22,7 +22,7 @@ function getWeatherElementForHours(hourly_weather_element, hours, usePreviousHou
     const weatherByHour = [];
     for (const hour of hours) {
         const hourToUse = usePreviousHours ? hour - 1 : hour;
-        if (hourToUse < 0)
+        if (hourToUse < 0 || hourToUse > 23)
             continue;
         weatherByHour.push(hourly_weather_element[hourToUse]);
     }
@@ -61,24 +61,25 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
         pastData: current_hour > lastHour
     };
 }
-function getCurrentChanceOfRain(percentageChance, now) {
+function getCurrentChanceOfRain(percentageChance, totalRain, now) {
+    var rainAmountStr = (totalRain > 0) ? `, ${totalRain}mm` : "";
     if (now) {
         if (percentageChance === 0)
             return "No Rain";
         if (percentageChance < 40)
-            return "Rain unlikely";
+            return `Rain unlikely${rainAmountStr}`;
         if (percentageChance < 60)
-            return "Rain likely";
+            return `Rain likely${rainAmountStr}`;
         if (percentageChance < 90)
-            return "Rain v likely";
+            return `Rain v likely${rainAmountStr}`;
         else
-            return "Will rain";
+            return `Will rain${rainAmountStr}`;
     }
     else {
         if (percentageChance === 0)
             return "No Rain expected";
         else {
-            return `${percentageChance}% chance of rain`;
+            return `${percentageChance}% chance of rain${rainAmountStr}`;
         }
     }
 }
@@ -114,7 +115,7 @@ function updateBlock(blockName, elementName, boxName, iconName, currentHour, res
         const tempMinFeelsLikeString = `${block.tempFeelsLikeMin}°C`;
         const tempMaxFeelsLikeString = `${block.tempFeelsLikeMax}°C`;
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
-        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, block.totalRainfall, false)}`;
         setElementBlock(elementName + "Title", `${block.blockName}`);
         document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
         setElementBlock(elementName + "TempMinFeelsLike", `${tempMinFeelsLikeString}`);
@@ -126,7 +127,6 @@ function updateBlock(blockName, elementName, boxName, iconName, currentHour, res
 function updateCurrentBlock(response, weatherCode) {
     setElementBlock("currentTemperatureFeelsLike", `${Math.round(response.current.apparent_temperature)} °C`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
-    setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     document.getElementById('currentWeatherIcon').src = getWeatherImage(weatherCode);
 }
 function updateDayBlocks(response, currentHour) {
@@ -138,7 +138,7 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`;
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`);
     const umbrellaIcon = "umbrellaIcon";
-    document.getElementById(umbrellaIcon).src = getUmbrellaIcon(rainTotalExpected);
+    document.getElementById(umbrellaIcon).src = getUmbrellaIcon(chanceOfRainPerc);
 }
 function updatePage(pageResponse) {
     const response = JSON.parse(pageResponse);
@@ -149,6 +149,7 @@ function updatePage(pageResponse) {
     updateDayBlocks(response, currentHour);
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour);
+    setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
 }
 function getWeatherData() {
     const latitude = 35.6587; // Latitude for Kachidoki, Tokyo

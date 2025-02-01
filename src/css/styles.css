@@ -116,13 +116,13 @@ body .material-symbols-outlined.therm-size {
     margin-top: 20px;
 }
 
-#currentRainBox {
+#todayRainBox {
     float: left;
     margin-top: 10px;
     margin-right: 40px;
 }
 
-#currentRainDescription {
+#todayRainDescription {
     float: left;
     margin-left: 20px;
     margin-top: 20px;
@@ -150,8 +150,20 @@ body .material-symbols-outlined.therm-size {
     font-size: 45px;
 }
 
+.grey-txt {
+    color: #BEBEC5;
+}
+
+hr.weather-divide {
+    border: 0;
+    height: 1px;
+    background-color:#A17053;
+    overflow: auto;
+    clear: both;
+  }
+
 .boxProperties {
-    width: 270px;
+    width: 300px;
     float: left;
     padding: 20px;
     margin-right: 10px;
@@ -167,6 +179,28 @@ body .material-symbols-outlined.therm-size {
     float: left;
     padding-top: 30px;
     margin-bottom: 100px;
+}
+
+.weather-block-conditions {
+    float: left;
+    width: 100px;
+}
+
+.weather-block {
+    float: left;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.weather-block-temp {
+    margin-left: 30px;
+    float: right;
+    width: 150px;
+    margin-top: 10px;
+}
+
+.topmargin {
+    margin-top: 20px;
 }
 
 #col-left {

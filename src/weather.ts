@@ -39,7 +39,7 @@ function getWeatherElementForHours(hourly_weather_element: any, hours: number[],
     const weatherByHour = []
     for (const hour of hours) {
         const hourToUse = usePreviousHours ? hour-1 : hour
-        if (hourToUse < 0)
+        if (hourToUse < 0 || hourToUse > 23)
             continue;
         weatherByHour.push(hourly_weather_element[hourToUse])
     }
@@ -86,23 +86,24 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
     }
 }
 
-function getCurrentChanceOfRain(percentageChance: number, now: boolean): string {
+function getCurrentChanceOfRain(percentageChance: number, totalRain: number, now: boolean): string {
+    var rainAmountStr = (totalRain > 0) ? `, ${totalRain}mm` : "";
     if (now) {
         if (percentageChance === 0 )
-            return "No Rain"
+            return "No Rain";
         if (percentageChance < 40 )
-            return "Rain unlikely"
+            return `Rain unlikely${rainAmountStr}`;
         if (percentageChance < 60 )
-            return "Rain likely"
+            return `Rain likely${rainAmountStr}`;
         if (percentageChance < 90 )
-            return "Rain v likely"
+            return `Rain v likely${rainAmountStr}`;
         else
-            return "Will rain"
+            return `Will rain${rainAmountStr}`;
     } else {
         if (percentageChance === 0 )
             return "No Rain expected";
         else {
-            return `${percentageChance}% chance of rain`
+            return `${percentageChance}% chance of rain${rainAmountStr}`;
         }
     }
 }
@@ -143,7 +144,7 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
         const tempMinFeelsLikeString = `${block.tempFeelsLikeMin}°C`
         const tempMaxFeelsLikeString = `${block.tempFeelsLikeMax}°C`
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
-        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, block.totalRainfall, false)}`;
 
         setElementBlock(elementName + "Title", `${block.blockName}`);
         (document.getElementById(iconName) as HTMLImageElement).src = getWeatherImage(block.weatherCode);
@@ -157,7 +158,6 @@ function updateBlock(blockName: string, elementName: string, boxName: string, ic
 function updateCurrentBlock(response: any, weatherCode: number) {
     setElementBlock("currentTemperatureFeelsLike", `${Math.round(response.current.apparent_temperature)} °C`);
     setElementBlock("currentConditions", getWeatherDescription(weatherCode));
-    setElementBlock("currentRain", getCurrentChanceOfRain(response.current.rain, true));
     (document.getElementById('currentWeatherIcon') as HTMLImageElement).src = getWeatherImage(weatherCode);
 }
 
@@ -171,7 +171,7 @@ function updateChanceOfRainBlock() {
     const chanceOfRainStr = `${chanceOfRainPerc}%`
     setElementBlock("carryUmbrealla", `${chanceOfRainStr}`)
     const umbrellaIcon: string = "umbrellaIcon";
-    (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(rainTotalExpected);
+    (document.getElementById(umbrellaIcon) as HTMLImageElement).src = getUmbrellaIcon(chanceOfRainPerc);
 }
 
 function updatePage(pageResponse: string) {
@@ -186,6 +186,7 @@ function updatePage(pageResponse: string) {
 
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour)
+    setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
 }
 
 function getWeatherData() {

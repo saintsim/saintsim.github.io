@@ -202,11 +202,11 @@ export function getWeatherDescription(weatherCode) {
             return "Unknown";
     }
 }
-export function getUmbrellaIcon(rainAmount) {
-    if (rainAmount > 20) {
+export function getUmbrellaIcon(rainPercChance) {
+    if (rainPercChance > 50) {
         return umbrellaIcon;
     }
-    if (rainAmount > 0) {
+    if (rainPercChance > 0) {
         return umbrellaClosedIcon;
     }
     return umbrellaClosedGreyIcon;
