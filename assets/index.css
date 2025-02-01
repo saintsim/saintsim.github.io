@@ -71,7 +71,7 @@ body .material-symbols-outlined.therm-size {
     background-color: #293C53;
     opacity: 90%;
     border-radius: 0 0 25px 25px;
-    width: 300px;
+    width: 305px;
     float: left;
     padding-bottom: 15px;
 }
@@ -97,7 +97,7 @@ body .material-symbols-outlined.therm-size {
 
 #currentTemperatureFeelsLike {
     float: right;
-    margin-top: -70px;
+    margin-top: 40px;
 }
 
 .current-box-margins {
