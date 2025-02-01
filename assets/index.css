@@ -120,6 +120,7 @@ body .material-symbols-outlined.therm-size {
     float: left;
     margin-top: 10px;
     margin-right: 40px;
+    margin-left: 10px;
 }
 
 #todayRainDescription {
