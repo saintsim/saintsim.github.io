@@ -43,4 +43,4 @@ function scheduleUpdateDate() {
 }
 
 scheduleUpdateDate();
-setInterval(updateTime, 1000);
+setInterval(updateTime, 1000); // every 1 second

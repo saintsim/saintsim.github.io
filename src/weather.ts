@@ -227,3 +227,4 @@ function getWeatherData() {
 }
 
 getWeatherData();
+setInterval(getWeatherData, 600000); // refresh every 10mins
