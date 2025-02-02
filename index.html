@@ -4,6 +4,7 @@
         <title>Today's Weather</title>
         <script type="module" src="built/date.js"></script>
         <script type="module" src="built/weather.js"></script>
+        <script type="module" src="built/bus.js"></script>
         <link rel="stylesheet" href="src/css/styles.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,6 +87,9 @@
     </div>
 
     <div id="schedule_box" class="boxProperties scheduleBoxProperties">
+        <p><span id="nextBusRoute" class="strongStyling"></span></p>
+        <p>-> <span id="nextBus" class="strongStyling"></span></p>
+        <p>-> <span id="nextNextBus" class="strongStyling"></span></p>
         <img class="img-icon" src="/public/assets/images/icon-bus.svg" width="80px" alt="Bus icon">
     </div>
 </div>

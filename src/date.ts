@@ -42,5 +42,12 @@ function scheduleUpdateDate() {
     }, timeToMidnight);
 }
 
+// used by the bus module
+export function isTodayAWeekday(): boolean {
+    let now:Date = new Date();
+    const currentDayOfWeek = daysOfWeek[now.getDay()];
+    return currentDayOfWeek != "Saturday" && currentDayOfWeek !== "Sunday";
+}
+
 scheduleUpdateDate();
 setInterval(updateTime, 1000); // every 1 second

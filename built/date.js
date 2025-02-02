@@ -1,4 +1,3 @@
-"use strict";
 const zeroFill = (n) => ('0' + n).slice(-2);
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function getOrdinal(n) {
@@ -36,6 +35,12 @@ function scheduleUpdateDate() {
         updateDate();
         setInterval(updateDate, 24 * 60 * 60 * 1000); // Update every 24 hours
     }, timeToMidnight);
+}
+// used by the bus module
+export function isTodayAWeekday() {
+    let now = new Date();
+    const currentDayOfWeek = daysOfWeek[now.getDay()];
+    return currentDayOfWeek != "Saturday" && currentDayOfWeek !== "Sunday";
 }
 scheduleUpdateDate();
 setInterval(updateTime, 1000); // every 1 second
