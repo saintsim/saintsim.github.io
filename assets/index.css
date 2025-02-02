@@ -198,12 +198,13 @@ hr.weather-divide {
 .scheduleBoxProperties {
     width: 250px;
     margin-left: 20px;
+    margin-right: 0;
 }
 
 #blocks {
     clear: left;
     float: left;
-    padding-top: 30px;
+    padding-top: 20px;
     margin-bottom: 100px;
 }
 
@@ -227,6 +228,7 @@ hr.weather-divide {
 
 #weather_box {
     margin-left: 20px;
+    width: 320px;
 }
 
 .img-icon {
