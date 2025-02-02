@@ -75,7 +75,7 @@ function scheduleUpdateDate() {
     }, timeToMidnight);
 }
 scheduleUpdateDate();
-setInterval(updateTime, 1000);
+setInterval(updateTime, 1000); // every 1 second
 
 const weatherConfig = {
     blockMorningHours: [8, 9, 10, 11, 12],
@@ -550,3 +550,4 @@ function getWeatherData() {
     xhr.send();
 }
 getWeatherData();
+setInterval(getWeatherData, 600000); // refresh every 10mins
