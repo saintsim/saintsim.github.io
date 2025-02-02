@@ -100,12 +100,12 @@ export function getNextTwoBusTimes() {
             }
             setElementBlock("nextBusRoute", "Next bus to Kachidoki:");
         }
-        setElementBlock("nextBus", nextBus.nextBus);
-        setElementBlock("nextNextBus", nextNextBus.nextBus);
+        setElementBlock("nextBus", `${nextBus.nextBus} (${nextBus.waitTime} mins)`);
+        setElementBlock("nextNextBus", `${nextNextBus.nextBus} (${nextNextBus.waitTime} mins)`);
     }
     else {
         // no bus needed today
     }
 }
 getNextTwoBusTimes();
-setInterval(getNextTwoBusTimes, 600000); // refresh every 10mins
+setInterval(getNextTwoBusTimes, 60000); // refresh every 1min
