@@ -64,7 +64,7 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
     };
 }
 function getCurrentChanceOfRain(percentageChance, totalRain, now) {
-    var rainAmountStr = (totalRain > 0) ? `, ${totalRain}mm` : "";
+    var rainAmountStr = (totalRain > 0) ? `, ${Math.round(totalRain)}mm` : "";
     if (now) {
         if (percentageChance === 0)
             return "No Rain";

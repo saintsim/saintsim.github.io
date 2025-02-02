@@ -89,7 +89,7 @@ function getTemperatureBlock(blockName: string, hourly_weather_data: any, curren
 }
 
 function getCurrentChanceOfRain(percentageChance: number, totalRain: number, now: boolean): string {
-    var rainAmountStr = (totalRain > 0) ? `, ${totalRain}mm` : "";
+    var rainAmountStr = (totalRain > 0) ? `, ${Math.round(totalRain)}mm` : "";
     if (now) {
         if (percentageChance === 0 )
             return "No Rain";
