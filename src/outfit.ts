@@ -58,7 +58,7 @@ export function updateOutfitOptions(minTemeperature: number, chanceOfRainPerc: n
         outfitShorts = activeColour;
     }
 
-    if (chanceOfRainPerc > 0) {
+    if (chanceOfRainPerc > 39) {
         outfitUmbrella = activeColour;
     }
 

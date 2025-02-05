@@ -383,7 +383,7 @@ function updateOutfitOptions(minTemeperature, chanceOfRainPerc) {
     else {
         outfitShorts = activeColour;
     }
-    if (chanceOfRainPerc > 0) {
+    if (chanceOfRainPerc > 39) {
         outfitUmbrella = activeColour;
     }
     setOutfitColour(outfitShorts, outfitTrousers, outfitJumper, outfitLightJacket, outfitBigCoat, outfitScarf, outfitHatGloves, outfitUmbrella);
