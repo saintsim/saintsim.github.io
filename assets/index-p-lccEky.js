@@ -395,6 +395,7 @@ const eveningBlockName = "Evening";
 let chanceOfRainPerc = 0;
 let rainTotalExpected = 0;
 let minTemperature = 100;
+let lastUpdatedTime;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -554,9 +555,17 @@ function getWeatherData() {
         }
     };
     xhr.send();
+    lastUpdatedTime = new Date();
+    setElementBlock$1("weatherLastUpdated", lastUpdatedTime);
+}
+function checkIfWeatherNeedsAnUpdate() {
+    // if not updated for 10mins, update
+    if ((new Date().getTime() - lastUpdatedTime.getTime()) > 600000) {
+        getWeatherData();
+    }
 }
 getWeatherData();
-setInterval(getWeatherData, 600000); // refresh every 10mins
+setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
 
 // dates added on 02Feb2025 (https://tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt/)
 const brtKachidokiToToranomonBusTimes = {

@@ -250,3 +250,8 @@ hr.weather-divide {
 #col-right {
     float: left;
 }
+
+#updateTimeBlock {
+    clear: both;
+}
+
