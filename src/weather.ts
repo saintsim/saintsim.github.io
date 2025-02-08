@@ -11,6 +11,8 @@ export let isUmbrellaNeeded: boolean = false
 export let rainTotalExpected: number = 0
 export let minTemperature: number = 100
 
+let lastUpdatedTime: Date;
+
 interface TemperatureBlock {
     blockName: string;
     blockStartHour: number; // 24hr clock notation
@@ -224,7 +226,16 @@ function getWeatherData() {
         }
     };
     xhr.send();
+    lastUpdatedTime = new Date();
+    setElementBlock("weatherLastUpdated", lastUpdatedTime)
+}
+
+function checkIfWeatherNeedsAnUpdate() {
+    // if not updated for 10mins, update
+    if ((new Date().getTime() - lastUpdatedTime.getTime()) > 600000) {
+        getWeatherData();
+    }
 }
 
 getWeatherData();
-setInterval(getWeatherData, 600000); // refresh every 10mins
+setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
