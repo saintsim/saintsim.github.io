@@ -396,6 +396,8 @@ let chanceOfRainPerc = 0;
 let rainTotalExpected = 0;
 let minTemperature = 100;
 let lastUpdatedTime;
+let city;
+let cityLatLong;
 function getHours(blockName) {
     switch (blockName) {
         case morningBlockName:
@@ -527,12 +529,45 @@ function updatePage(pageResponse) {
     setElementBlock$1("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
     updateOutfitOptions(minTemperature, chanceOfRainPerc);
 }
+function getLatLong() {
+    let latitude;
+    let longitude;
+    switch (city) {
+        case 'Furano': {
+            latitude = 43.3250;
+            longitude = 142.3532;
+            break;
+        }
+        case 'Niseko': {
+            latitude = 42.8;
+            longitude = 140.683333;
+            break;
+        }
+        case 'Osaka': {
+            latitude = 34.733483;
+            longitude = 135.500114;
+            break;
+        }
+        case 'Kobe': {
+            latitude = 34.69;
+            longitude = 135.195556;
+            break;
+        }
+        default: {
+            // tokyo
+            latitude = 35.6587;
+            longitude = 139.7765;
+        }
+    }
+    return {
+        latitude: latitude,
+        longitude: longitude
+    };
+}
 function getWeatherData() {
-    const latitude = 35.6587; // Latitude for Kachidoki, Tokyo
-    const longitude = 139.7765; // Longitude for Kachidoki, Tokyo
     const url = "https://api.open-meteo.com/v1/forecast?" +
-        "latitude=" + latitude +
-        "&longitude=" + longitude +
+        "latitude=" + cityLatLong.latitude +
+        "&longitude=" + cityLatLong.longitude +
         "&timezone=Asia%2FTokyo" +
         "&current=temperature_2m,apparent_temperature,is_day,precipitation,precipitation_probability,rain,showers,snowfall,weather_code" +
         "&forecast_days=1" +
@@ -564,6 +599,18 @@ function checkIfWeatherNeedsAnUpdate() {
         getWeatherData();
     }
 }
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+function getCityFromUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlParamsReturned = urlParams.get("city") || 'tokyo';
+    console.log(urlParamsReturned);
+    city = capitalize(urlParamsReturned);
+    cityLatLong = getLatLong();
+    setElementBlock$1("city", city);
+}
+getCityFromUrlParams();
 getWeatherData();
 setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
 
