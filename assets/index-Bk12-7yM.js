@@ -38,6 +38,7 @@ true&&(function polyfill() {
 
 const zeroFill = (n) => ('0' + n).slice(-2);
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+let lastUpdatedTime$1;
 function getOrdinal(n) {
     const ord = ["st", "nd", "rd"];
     const exceptions = [11, 12, 13];
@@ -56,6 +57,7 @@ function updateDate() {
     if (dateElement) {
         dateElement.innerHTML = `${currentDayOfWeek} ${dayOfMonth} ${month}`;
     }
+    lastUpdatedTime$1 = new Date();
 }
 function updateTime() {
     let now = new Date();
@@ -80,8 +82,15 @@ function isTodayAWeekday() {
     const currentDayOfWeek = daysOfWeek[now.getDay()];
     return currentDayOfWeek != "Saturday" && currentDayOfWeek !== "Sunday";
 }
+function checkIfDateNeedsAnUpdate() {
+    // if not updated for 10mins, update
+    if ((new Date().getTime() - lastUpdatedTime$1.getTime()) > 600000) {
+        updateDate();
+    }
+}
 scheduleUpdateDate();
 setInterval(updateTime, 1000); // every 1 second
+setInterval(checkIfDateNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
 
 const weatherConfig = {
     blockMorningHours: [8, 9, 10, 11, 12],
@@ -367,13 +376,16 @@ function updateOutfitOptions(minTemeperature, chanceOfRainPerc) {
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
         outfitBigCoat = activeColour;
+        outfitScarf = activeColour;
     }
     else if (minTemeperature < 11) {
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
-        outfitLightJacket = activeColour;
+        outfitBigCoat = activeColour;
+        outfitScarf = activeColour;
     }
     else if (minTemeperature < 16) {
+        outfitLightJacket = activeColour;
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
     }
