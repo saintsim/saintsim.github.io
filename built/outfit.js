@@ -36,13 +36,16 @@ export function updateOutfitOptions(minTemeperature, chanceOfRainPerc) {
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
         outfitBigCoat = activeColour;
+        outfitScarf = activeColour;
     }
     else if (minTemeperature < 11) {
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
-        outfitLightJacket = activeColour;
+        outfitBigCoat = activeColour;
+        outfitScarf = activeColour;
     }
     else if (minTemeperature < 16) {
+        outfitLightJacket = activeColour;
         outfitTrousers = activeColour;
         outfitJumper = activeColour;
     }

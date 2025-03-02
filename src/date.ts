@@ -2,6 +2,7 @@ const zeroFill = (n: number) => ('0' + n).slice(-2);
 
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+let lastUpdatedTime: Date;
 function getOrdinal(n: number) {
     const ord = ["st", "nd", "rd"];
     const exceptions = [11, 12, 13];
@@ -21,6 +22,7 @@ function updateDate() {
     if (dateElement) {
         dateElement.innerHTML = `${currentDayOfWeek} ${dayOfMonth} ${month}`;
     }
+    lastUpdatedTime = new Date();
 }
 
 function updateTime() {
@@ -49,5 +51,13 @@ export function isTodayAWeekday(): boolean {
     return currentDayOfWeek != "Saturday" && currentDayOfWeek !== "Sunday";
 }
 
+function checkIfDateNeedsAnUpdate() {
+    // if not updated for 10mins, update
+    if ((new Date().getTime() - lastUpdatedTime.getTime()) > 600000) {
+        updateDate();
+    }
+}
+
 scheduleUpdateDate();
 setInterval(updateTime, 1000); // every 1 second
+setInterval(checkIfDateNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
