@@ -292,6 +292,14 @@ function getCityFromUrlParams()   {
     setElementBlock("city", city)
 }
 
+const refreshButton = document.getElementById('refreshButton');
+
+if (refreshButton) {
+    refreshButton.addEventListener('click', (): void => {
+        window.location.reload();
+    });
+}
+
 getCityFromUrlParams();
 getWeatherData();
 setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
