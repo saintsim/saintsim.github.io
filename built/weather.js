@@ -66,27 +66,29 @@ function getTemperatureBlock(blockName, hourly_weather_data, current_hour) {
         pastData: current_hour > lastHour
     };
 }
-function getCurrentChanceOfRain(percentageChance, totalRain, now) {
-    var rainAmountStr = (totalRain > 0) ? `, ${Math.round(totalRain)}mm` : "";
+function getCurrentChanceOfRain(percentageChance, now) {
     if (now) {
         if (percentageChance === 0)
             return "No Rain";
         if (percentageChance < 40)
-            return `Rain unlikely${rainAmountStr}`;
+            return `Rain unlikely`;
         if (percentageChance < 60)
-            return `Rain likely${rainAmountStr}`;
+            return `Rain likely`;
         if (percentageChance < 90)
-            return `Rain v likely${rainAmountStr}`;
+            return `Rain v likely`;
         else
-            return `Will rain${rainAmountStr}`;
+            return `Will rain`;
     }
     else {
         if (percentageChance === 0)
             return "No Rain expected";
         else {
-            return `${percentageChance}% chance of rain${rainAmountStr}`;
+            return `${percentageChance}% chance of rain`;
         }
     }
+}
+function getRainAmount(totalRain) {
+    return (totalRain > 0) ? `${Math.round(totalRain)}mm` : "";
 }
 function setElementBlock(id, data) {
     const currentElement = document.getElementById(id);
@@ -123,7 +125,7 @@ function updateBlock(blockName, elementName, boxName, iconName, currentHour, res
         const tempMinFeelsLikeString = `${block.tempFeelsLikeMin}°C`;
         const tempMaxFeelsLikeString = `${block.tempFeelsLikeMax}°C`;
         const conditionsString = `${getWeatherDescription(block.weatherCode)}`;
-        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, block.totalRainfall, false)}`;
+        const percString = `${getCurrentChanceOfRain(block.precepitationPercHighest, false)}`;
         setElementBlock(elementName + "Title", `${block.blockName}`);
         document.getElementById(iconName).src = getWeatherImage(block.weatherCode);
         setElementBlock(elementName + "TempMinFeelsLike", `${tempMinFeelsLikeString}`);
@@ -157,7 +159,8 @@ function updatePage(pageResponse) {
     updateDayBlocks(response, currentHour);
     updateChanceOfRainBlock();
     setElementBlock("currentHour", currentHour);
-    setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, rainTotalExpected, true));
+    setElementBlock("todayRain", getCurrentChanceOfRain(chanceOfRainPerc, true));
+    setElementBlock("todayRainAmount", getRainAmount(rainTotalExpected));
     updateOutfitOptions(minTemperature, chanceOfRainPerc);
 }
 function getLatLong() {

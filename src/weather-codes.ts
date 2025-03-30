@@ -156,33 +156,33 @@ export function getWeatherDescription(weatherCode: number): string {
         case 45:
             return "Fog";
         case 48:
-            return "Depositing rime fog";
+            return "Rime fog";
         case 51:
             return "Drizzle: Light";
         case 53:
             return "Drizzle: Moderate";
         case 55:
-            return "Drizzle: Dense intensity";
+            return "Drizzle: Dense";
         case 56:
             return "Freezing Drizzle: Light";
         case 57:
-            return "Freezing Drizzle: Dense intensity";
+            return "Freezing Drizzle: Dense";
         case 61:
             return "Rain: Slight";
         case 63:
             return "Rain: Moderate";
         case 65:
-            return "Rain: Heavy intensity";
+            return "Rain: Heavy";
         case 66:
             return "Freezing Rain: Light";
         case 67:
-            return "Freezing Rain: Heavy intensity";
+            return "Freezing Rain: Heavy";
         case 71:
             return "Snow fall: Slight";
         case 73:
             return "Snow fall: Moderate";
         case 75:
-            return "Snow fall: Heavy intensity";
+            return "Snow fall: Heavy";
         case 77:
             return "Snow grains";
         case 80:
@@ -198,7 +198,7 @@ export function getWeatherDescription(weatherCode: number): string {
         case 95:
             return "Thunderstorm: Slight or moderate";
         case 96:
-            return "Thunderstorm with slight and heavy hail";
+            return "Thunderstorm with slight & heavy hail";
         case 99:
             return "Thunderstorm: Heavy hail";
         default:
