@@ -255,3 +255,22 @@ hr.weather-divide {
     clear: both;
 }
 
+.transparent-button {
+    background-color: transparent;
+    border: 1px solid #293C53;
+    border-radius: 20px;
+    color: #fff;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.transparent-button:hover {
+    border-color: #555;
+    background-color: #293C53;
+}
+
+.transparent-button:active {
+    transform: scale(0.98);
+}
