@@ -1,6 +1,6 @@
 import { isTodayAWeekday } from './date'
 
-// dates updated on 30Sep2025 (https://tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt/)
+// dates updated on 6March2026 (https://tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt/)
 const brtKachidokiToToranomonBusTimes: BusSchedule = {
     6:  [31, 46],
     7:  [6, 26, 36, 42, 53],
