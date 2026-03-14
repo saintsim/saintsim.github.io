@@ -17,7 +17,7 @@ const brtKachidokiToToranomonBusTimes: BusSchedule = {
 };
 
 const brtToranomonToKachidokiBusTimes: BusSchedule = {
-    // don't expect to use a bus earlier than this
+    // don't expect to use a bus earlier than this (update on 14March2026- https://tokyo-brt.co.jp/bus-stops/b11-toranomon-hills)
     12: [5, 25, 40],
     13: [0, 15, 35, 50],
     14: [10, 25, 45],
@@ -25,7 +25,7 @@ const brtToranomonToKachidokiBusTimes: BusSchedule = {
     16: [10, 30, 45],
     17: [5, 20, 40, 55],
     18: [15, 30, 50],
-    19: [10, 20, 35, 50],
+    19: [0, 20, 35, 50],
     20: [10, 30, 50],
     21: [10, 30, 50],
     22: [10, 32]
