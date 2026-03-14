@@ -637,10 +637,10 @@ setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000
 
 // dates updated on 6March2026 (https://tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt/)
 const brtKachidokiToToranomonBusTimes = {
-    6:  [31, 46],
-    7:  [6, 26, 36, 42, 53],
-    8:  [1, 11, 16, 22, 31, 40, 50],
-    9:  [6, 21, 46, 56],
+    6: [31, 46],
+    7: [6, 26, 36, 42, 53],
+    8: [1, 11, 16, 22, 31, 40, 50],
+    9: [6, 21, 46, 56],
     10: [16, 31, 51],
     11: [6, 26, 46],
     12: [1, 16, 39, 51],
@@ -650,9 +650,8 @@ const brtKachidokiToToranomonBusTimes = {
     16: [6, 21, 41, 56]
     // don't expect to take thus bus after this
 };
-
 const brtToranomonToKachidokiBusTimes = {
-    // don't expect to use a bus earlier than this
+    // don't expect to use a bus earlier than this (update on 14March2026- https://tokyo-brt.co.jp/bus-stops/b11-toranomon-hills)
     12: [5, 25, 40],
     13: [0, 15, 35, 50],
     14: [10, 25, 45],
@@ -660,12 +659,11 @@ const brtToranomonToKachidokiBusTimes = {
     16: [10, 30, 45],
     17: [5, 20, 40, 55],
     18: [15, 30, 50],
-    19: [10, 20, 35, 50],
+    19: [0, 20, 35, 50],
     20: [10, 30, 50],
     21: [10, 30, 50],
     22: [10, 32]
 };
-
 function findNextBus(hour, minute, schedule) {
     const currentTime = new Date();
     // Convert schedule into sorted array of all times
