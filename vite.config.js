@@ -9,7 +9,6 @@ export default {
       rollupOptions: {
         // Ensure proper handling of assets
         output: {
-          compact: false,  // remove after debug complete
           assetFileNames: ({ name }) => {
             // Keep images organized in the dist folder
             if (/\.(png|jpg|jpeg|gif|svg)$/.test(name ?? '')) {
