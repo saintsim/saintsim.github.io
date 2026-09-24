@@ -87,7 +87,8 @@ export function toranomonToKachidoki(html) {
         if (!tab.legend.length || unknown.length) {
             throw new Error(`toranomon: legend has destinations not known to pass Kachidoki: ${JSON.stringify(unknown.length ? unknown : tab.legend)}`);
         }
-        const marks = new Set(tab.legend.map(l => l.split('：')[0].trim()));
+        // "無印" (no mark) in a legend explains the unmarked departures
+        const marks = new Set(tab.legend.map(l => l.split('：')[0].trim()).map(m => (m === '無印' ? '' : m)));
         const unexplained = [...new Set(tab.departures.map(d => d.mark))].filter(m => !marks.has(m));
         if (unexplained.length) throw new Error(`toranomon: departures marked ${JSON.stringify(unexplained)} aren't in the legend`);
     }

@@ -93,3 +93,11 @@ test('fails loudly when a Toranomon Hills departure has a mark the legend does n
     assert.notEqual(unexplained, toranomon);
     assert.throws(() => toranomonToKachidoki(unexplained), /aren't in the legend/);
 });
+
+test('a 無印 legend line explains unmarked Toranomon Hills departures', () => {
+    const unmarked = toranomon
+        .replace('<p>晴', '<p>無印：【B23】豊洲 止まり</p><p>晴')
+        .replace(/<div class="sub">豊<span class="noPrint">洲<\/span><\/div>/, '<div class="sub">&nbsp;</div>');
+    assert.notEqual(unmarked, toranomon);
+    assert.equal(count(toranomonToKachidoki(unmarked)), count(toranomonToKachidoki(toranomon)));
+});
