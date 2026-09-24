@@ -1,10 +1,13 @@
 name: Update BRT timetable
 
-# Re-scrapes the Tokyo BRT timetables weekly (Sunday 09:00 JST, leaving the day to fix a failed run) and opens a PR when
-# they change. Run it sooner from the Actions tab with "Run workflow".
+# Re-scrapes the Tokyo BRT timetables weekly (Sunday morning JST, leaving the day to fix a
+# failed run) and opens a PR when they change. Run it sooner from the Actions tab with "Run workflow".
+# Needs Settings -> Actions -> General -> "Allow GitHub Actions to create and approve pull requests".
+# GitHub disables scheduled workflows after 60 days without repo activity; re-enable it from the Actions tab.
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Sunday 00:00 UTC = Sunday 09:00 JST (GitHub cron is always UTC)
+    # Sunday 00:23 UTC = 09:23 JST (GitHub cron is always UTC; off the hour, as :00 runs are often delayed)
+    - cron: '23 0 * * 0'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +38,7 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git diff -- src/bus-schedule.ts >> "$GITHUB_STEP_SUMMARY"
+            { echo '```diff'; git diff -- src/bus-schedule.ts; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           fi
 
       # The site is built from the compiled built/*.js, so recompile the schedule too.

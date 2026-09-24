@@ -69,3 +69,27 @@ test('fails loudly when the Toranomon legend is missing', () => {
     const noLegend = kachidoki.replace(/：【B11】虎ノ門ヒルズ行/g, '');
     assert.throws(() => kachidokiToToranomon(noLegend), /legend/);
 });
+
+test('legends skip commented-out lines and read uppercase <P> tags', () => {
+    const [toranomonTab] = parseStop(toranomon);
+    assert.deepEqual(toranomonTab.legend, [
+        '晴海：【B22】晴海BRTターミナル 止まり',
+        '豊洲：【B23】豊洲 止まり',
+        'ミチ：【B03】ミチノテラス豊洲 行',
+        '国展：【B05】国際展示場 行'
+    ]);
+    const kachidokiTab = parseStop(kachidoki).find(t => t.label.includes('虎ノ門ヒルズ'));
+    assert.deepEqual(kachidokiTab.legend, ['無印：【B01】新橋 止まり', '虎ノ門：【B11】虎ノ門ヒルズ行']);
+});
+
+test('fails loudly when Toranomon Hills lists a destination not known to pass Kachidoki', () => {
+    const newRoute = toranomon.replace('<p>晴', '<p>新宿：【X01】新宿 行</p><p>晴');
+    assert.notEqual(newRoute, toranomon);
+    assert.throws(() => toranomonToKachidoki(newRoute), /not known to pass Kachidoki/);
+});
+
+test('fails loudly when a Toranomon Hills departure has a mark the legend does not explain', () => {
+    const unexplained = toranomon.replace(/<div class="sub">豊<span class="noPrint">洲<\/span><\/div>/, '<div class="sub">謎</div>');
+    assert.notEqual(unexplained, toranomon);
+    assert.throws(() => toranomonToKachidoki(unexplained), /aren't in the legend/);
+});
