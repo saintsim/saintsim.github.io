@@ -4,7 +4,7 @@ name: Update BRT timetable
 # they change. Run it sooner from the Actions tab with "Run workflow".
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Sunday 00:00 UTC
+    - cron: '0 0 * * 0'  # Sunday 00:00 UTC = Sunday 09:00 JST (GitHub cron is always UTC)
   workflow_dispatch:
 
 permissions:
