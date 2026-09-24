@@ -1,0 +1,63 @@
+name: Update BRT timetable
+
+# Re-scrapes the Tokyo BRT timetables weekly (Monday 09:00 JST) and opens a PR when
+# they change. Run it sooner from the Actions tab with "Run workflow".
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test scraper against saved pages
+        run: npm test
+
+      - name: Scrape timetables
+        run: node scripts/scrape-brt.mjs
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- src/bus-schedule.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff -- src/bus-schedule.ts >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # The site is built from the compiled built/*.js, so recompile the schedule too.
+      - name: Compile
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm install
+          npx tsc
+
+      - name: Open pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: brt-timetable-update
+          add-paths: |
+            src/bus-schedule.ts
+            built/bus-schedule.js
+          commit-message: Update BRT timetable
+          title: Update BRT timetable
+          body: |
+            The Tokyo BRT timetable changed. Check the times against the stop pages before merging:
+            - https://www.tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt (Toranomon Hills-bound only)
+            - https://www.tokyo-brt.co.jp/bus-stops/b11-toranomon-hills (all departures)
+
+            Merging deploys the site.

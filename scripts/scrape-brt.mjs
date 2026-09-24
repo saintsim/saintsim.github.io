@@ -6,154 +6,93 @@
 //   node scripts/scrape-brt.mjs            scrape and rewrite src/bus-schedule.ts
 //   node scripts/scrape-brt.mjs --dry-run  scrape and print, write nothing
 //
-// Env overrides, for when the site changes how it marks departures:
-//   BRT_TORANOMON_MARK  the mark used on Toranomon Hills-bound departures at Kachidoki
-//   BRT_DEBUG_DIR       write each page's raw HTML and extracted text here
+// Page structure (see scripts/fixtures/NOTES.md): each direction is a CSS tab,
+// <label class="tab" for="tabN"> naming the destinations, with its timetables in
+// <div class="tabItem" id="tabItemN">. The weekday one is <table class="table-tt weekday">,
+// one <tr> per hour, one <div class="item"> per departure holding <div class="time">
+// and <div class="sub"> destination marks explained by the tab's legend <p>s.
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const STOPS = {
+export const STOPS = {
     kachidoki: 'https://www.tokyo-brt.co.jp/bus-stops/b02-kachidoki-brt',
     toranomon: 'https://www.tokyo-brt.co.jp/bus-stops/b11-toranomon-hills'
 };
 const OUTPUT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'bus-schedule.ts');
-const DRY_RUN = process.argv.includes('--dry-run');
-const DEBUG_DIR = process.env.BRT_DEBUG_DIR;
 
-const WEEKDAY = /平日|weekday/i;
-const TORANOMON = /虎ノ門ヒルズ|虎ノ門|toranomon/i;
-const KACHIDOKI_BOUND = /勝どき|晴海|豊洲|有明|東京ビッグサイト|国際展示場|kachidoki|harumi|toyosu/i;
-
-async function fetchPage(url) {
-    const res = await fetch(url, { headers: { 'User-Agent': 'saintsim.github.io timetable scraper', 'Accept-Language': 'ja' } });
-    if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
-    return res.text();
-}
-
-// Flatten HTML to text lines, one per table row / block, keeping image alt text
-// and class names of empty elements (icons) as marks, since either may be how
-// the site flags a departure's destination.
-function htmlToLines(html) {
-    const text = html
-        .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, '')
-        .replace(/<!--[\s\S]*?-->/g, '')
-        .replace(/<img[^>]*\balt="([^"]*)"[^>]*>/gi, ' $1 ')
-        .replace(/<(\w+)[^>]*\bclass="([^"]*)"[^>]*>\s*<\/\1>/gi, ' [$2] ')
-        .replace(/<\/(tr|p|div|li|h\d|dt|dd|table|thead|tbody|section|caption)>|<br\s*\/?>/gi, '\n')
-        .replace(/<\/(td|th)>/gi, ' ')
-        // inline tags often wrap just the mark ("<span>虎</span>31"), so drop them without a gap
-        .replace(/<\/?(span|a|b|strong|em|i|sup|sub|small|font)\b[^>]*>/gi, '')
-        .replace(/<[^>]+>/g, ' ')
+function text(html) {
+    return html
+        .replace(/<[^>]+>/g, '')
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)));
-    return text.split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
-// A timetable row is an hour (5-25, optionally followed by 時) then minute tokens,
-// each of which may carry a non-digit mark before or after it.
-const ROW = /^(\d{1,2})\s*時?\s+(.*\d.*)$/;
-const MINUTE = /([^\d\s]*)(\d{1,2})([^\d\s]*)/g;
-
-function parseRow(line) {
-    const m = line.match(ROW);
-    if (!m) return null;
-    const hour = Number(m[1]);
-    if (hour < 4 || hour > 25) return null;
-    const departures = [];
-    for (const [, pre, min, post] of m[2].matchAll(MINUTE)) {
-        const minute = Number(min);
-        if (minute > 59) return null;
-        departures.push({ minute, mark: (pre + post).replace(/[()（）]/g, '') });
-    }
-    return departures.length ? { hour, departures } : null;
-}
-
-// Split the page into timetables: a run of consecutive rows, labelled by the
-// non-row lines seen since the previous timetable ended (tabs, headings, captions).
-function findTimetables(lines) {
-    const tables = [];
-    let heading = [];
-    let current = null;
-    for (const line of lines) {
-        const row = parseRow(line);
-        if (row) {
-            if (!current || row.hour <= current.rows.at(-1).hour) {
-                current = { heading: heading.join(' / '), rows: [] };
-                tables.push(current);
-                heading = [];
+// Returns one entry per direction tab: its label, legend lines and weekday departures.
+export function parseStop(html) {
+    html = html.replace(/<!--[\s\S]*?-->/g, ''); // commented-out legends name marks the tables don't use
+    const labels = new Map(
+        [...html.matchAll(/<label[^>]*class="tab"[^>]*for="tab(\d+)"[^>]*>([\s\S]*?)<\/label>/gi)]
+            .map(([, n, label]) => [n, text(label).replace(/印刷$/, '').trim()]));
+    const starts = [...html.matchAll(/<div class="tabItem" id="tabItem(\d+)">/gi)];
+    return starts.map((start, i) => {
+        const body = html.slice(start.index, starts[i + 1]?.index ?? html.length);
+        const table = body.match(/<table class="table-tt weekday">([\s\S]*?)<\/table>/i);
+        if (!table) throw new Error(`tabItem${start[1]}: no weekday timetable`);
+        const departures = [];
+        for (const [, hour, cells] of table[1].matchAll(/<tr>\s*<th[^>]*>\s*(\d+)\s*<\/th>([\s\S]*?)<\/tr>/gi)) {
+            for (const item of cells.split(/<div class="item">/i).slice(1)) {
+                const time = text(item.match(/<div class="time[^"]*">([\s\S]*?)<\/div>/i)?.[1] ?? '');
+                if (!time) continue; // hours with no service still emit an empty item
+                if (!/^\d{1,2}$/.test(time) || Number(time) > 59) throw new Error(`tabItem${start[1]}: bad minute "${time}" at ${hour}時`);
+                const mark = [...item.matchAll(/<div class="sub">([\s\S]*?)<\/div>/gi)].map(m => text(m[1])).join('');
+                departures.push({ hour: Number(hour), minute: Number(time), mark });
             }
-            current.rows.push(row);
-        } else {
-            current = null;
-            heading.push(line);
-            if (heading.length > 8) heading.shift();
         }
+        const legend = [...body.matchAll(/<p>([\s\S]*?)<\/p>/gi)].map(m => text(m[1])).filter(l => l.includes('：'));
+        return { label: labels.get(start[1]) ?? '', legend, departures };
+    });
+}
+
+// Kachidoki: the Shimbashi/Toranomon Hills tab mixes both destinations; keep only departures
+// carrying the mark the legend says means Toranomon Hills (unmarked ones stop at Shimbashi).
+export function kachidokiToToranomon(html) {
+    const tabs = parseStop(html).filter(t => t.label.includes('虎ノ門ヒルズ'));
+    if (tabs.length !== 1) throw new Error(`kachidoki: expected one Toranomon Hills tab, found ${tabs.length}`);
+    const [tab] = tabs;
+    const legend = tab.legend.filter(l => l.includes('虎ノ門ヒルズ'));
+    if (legend.length !== 1) throw new Error(`kachidoki: expected one Toranomon Hills legend line, found ${JSON.stringify(tab.legend)}`);
+    const mark = legend[0].split('：')[0].trim();
+    const toranomon = tab.departures.filter(d => d.mark === mark);
+    if (!toranomon.length || toranomon.length === tab.departures.length) {
+        throw new Error(`kachidoki: mark "${mark}" matched ${toranomon.length} of ${tab.departures.length} departures; expected some but not all`);
     }
-    return tables.filter(t => t.rows.length >= 5);
+    return toSchedule(toranomon);
 }
 
-function weekdayTables(tables) {
-    const weekday = tables.filter(t => WEEKDAY.test(t.heading));
-    if (weekday.length) return weekday;
-    // No labels: sites usually list weekday first, so take the first table only.
-    return tables.slice(0, 1);
+// Toranomon Hills is the terminus, so every departure heads south through Kachidoki.
+export function toranomonToKachidoki(html) {
+    return toSchedule(parseStop(html).flatMap(t => t.departures));
 }
 
-function pickOne(tables, stop, preferred) {
-    const candidates = preferred ? tables.filter(t => preferred.test(t.heading)) : [];
-    const pool = candidates.length ? candidates : tables;
-    if (pool.length !== 1) {
-        throw new Error(`${stop}: expected one weekday timetable, found ${pool.length}:\n` +
-            pool.map(t => `  - "${t.heading}" (${t.rows.length} hours)`).join('\n'));
-    }
-    return pool[0];
+export function timetableAsOf(html) {
+    return html.match(/<div class="update"><span class="marker">([^<]*)<\/span>/)?.[1].trim() ?? '';
 }
 
-function findToranomonMark(lines, marks) {
-    if (process.env.BRT_TORANOMON_MARK) return process.env.BRT_TORANOMON_MARK;
-    const found = [...marks].filter(mark =>
-        TORANOMON.test(mark) ||
-        lines.some(l => {
-            const i = l.indexOf(mark);
-            return i !== -1 && TORANOMON.test(l.slice(i, i + mark.length + 15)) && !parseRow(l);
-        }));
-    if (found.length !== 1) {
-        throw new Error(`kachidoki: can't tell which mark means Toranomon Hills. Marks on the weekday ` +
-            `timetable: ${JSON.stringify([...marks])}, matched legend: ${JSON.stringify(found)}. ` +
-            `Set BRT_TORANOMON_MARK to the right one.`);
-    }
-    return found[0];
-}
-
-function toSchedule(rows, keep = () => true) {
+function toSchedule(departures) {
     const schedule = {};
-    for (const { hour, departures } of rows) {
-        const minutes = departures.filter(keep).map(d => d.minute);
-        if (minutes.length) schedule[hour] = [...new Set(minutes)].sort((a, b) => a - b);
-    }
-    return schedule;
+    for (const { hour, minute } of departures) (schedule[hour] ??= new Set()).add(minute);
+    return Object.fromEntries(Object.entries(schedule)
+        .sort(([a], [b]) => a - b)
+        .map(([h, m]) => [h, [...m].sort((a, b) => a - b)]));
 }
 
-function count(schedule) {
+export function count(schedule) {
     return Object.values(schedule).reduce((n, m) => n + m.length, 0);
-}
-
-async function scrape(stop) {
-    const html = await fetchPage(STOPS[stop]);
-    const lines = htmlToLines(html);
-    if (DEBUG_DIR) {
-        await mkdir(DEBUG_DIR, { recursive: true });
-        await writeFile(path.join(DEBUG_DIR, `${stop}.html`), html);
-        await writeFile(path.join(DEBUG_DIR, `${stop}.txt`), lines.join('\n'));
-    }
-    const tables = findTimetables(lines);
-    console.log(`${stop}: ${tables.length} timetable(s): ${tables.map(t => `"${t.heading}"`).join(', ')}`);
-    return { lines, weekday: weekdayTables(tables) };
 }
 
 function formatSchedule(schedule) {
@@ -162,30 +101,9 @@ function formatSchedule(schedule) {
         .join(',\n') + '\n}';
 }
 
-async function main() {
-    const kachidoki = await scrape('kachidoki');
-    const toranomon = await scrape('toranomon');
-
-    // At Kachidoki both Shimbashi and Toranomon Hills buses share a timetable; only the marked ones go to Toranomon.
-    const outbound = pickOne(kachidoki.weekday, 'kachidoki', TORANOMON);
-    const marks = new Set(outbound.rows.flatMap(r => r.departures.map(d => d.mark)).filter(Boolean));
-    const mark = findToranomonMark(kachidoki.lines, marks);
-    const toToranomon = toSchedule(outbound.rows, d => d.mark === mark);
-
-    // Coming home, any bus from Toranomon Hills passes Kachidoki.
-    const inbound = pickOne(toranomon.weekday, 'toranomon', KACHIDOKI_BOUND);
-    const toKachidoki = toSchedule(inbound.rows);
-
-    const allOutbound = count(toSchedule(outbound.rows));
-    console.log(`Kachidoki -> Toranomon: ${count(toToranomon)} of ${allOutbound} departures (mark "${mark}")`);
-    console.log(`Toranomon -> Kachidoki: ${count(toKachidoki)} departures`);
-    if (count(toToranomon) < 10 || count(toToranomon) === allOutbound || count(toKachidoki) < 10) {
-        throw new Error('Scraped timetables look wrong (too few departures, or no Shimbashi buses filtered out); not writing.');
-    }
-
-    const today = new Date().toISOString().slice(0, 10);
-    const source = `// Weekday Tokyo BRT timetables used by bus.ts.
-// Regenerate with \`npm run scrape:brt\` (also run weekly by .github/workflows/scrape-brt.yml).
+export function renderScheduleModule({ scrapedAt, asOf, toToranomon, toKachidoki }) {
+    return `// Weekday Tokyo BRT timetables used by bus.ts.
+// Generated by scripts/scrape-brt.mjs (run weekly by .github/workflows/scrape-brt.yml).
 // Hand edits are fine, but the next scrape that finds a change will overwrite them.
 
 export type BusSchedule = {
@@ -193,7 +111,8 @@ export type BusSchedule = {
 };
 
 export const scheduleSource = {
-    scrapedAt: "${today}",
+    scrapedAt: "${scrapedAt}",
+    timetableAsOf: "${asOf}",
     kachidoki: "${STOPS.kachidoki}",
     toranomon: "${STOPS.toranomon}"
 };
@@ -204,11 +123,37 @@ export const brtKachidokiToToranomonBusTimes: BusSchedule = ${formatSchedule(toT
 // Toranomon Hills -> Kachidoki BRT (every departure)
 export const brtToranomonToKachidokiBusTimes: BusSchedule = ${formatSchedule(toKachidoki)};
 `;
-    const withoutDate = s => s.replace(/scrapedAt: ".*"/, '');
+}
+
+async function fetchPage(url) {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (saintsim.github.io timetable scraper)', 'Accept-Language': 'ja' } });
+    if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+    return res.text();
+}
+
+async function main() {
+    const kachidoki = await fetchPage(STOPS.kachidoki);
+    const toranomon = await fetchPage(STOPS.toranomon);
+    const toToranomon = kachidokiToToranomon(kachidoki);
+    const toKachidoki = toranomonToKachidoki(toranomon);
+    console.log(`Kachidoki -> Toranomon Hills: ${count(toToranomon)} weekday departures`);
+    console.log(`Toranomon Hills -> Kachidoki: ${count(toKachidoki)} weekday departures`);
+    if (count(toToranomon) < 10 || count(toKachidoki) < 10) {
+        throw new Error('Too few departures; the page layout has probably changed. Not writing.');
+    }
+
+    const source = renderScheduleModule({
+        scrapedAt: new Date().toISOString().slice(0, 10),
+        asOf: timetableAsOf(kachidoki),
+        toToranomon,
+        toKachidoki
+    });
+    // Only the timetables matter; a new scrape or "as of" date alone isn't worth a change.
+    const timetablesOnly = s => s.replace(/(scrapedAt|timetableAsOf): ".*"/g, '');
     const existing = await readFile(OUTPUT, 'utf8').catch(() => '');
-    if (DRY_RUN) {
+    if (process.argv.includes('--dry-run')) {
         console.log(source);
-    } else if (withoutDate(existing) === withoutDate(source)) {
+    } else if (timetablesOnly(existing) === timetablesOnly(source)) {
         console.log('Timetables unchanged.');
     } else {
         await writeFile(OUTPUT, source);
@@ -216,7 +161,9 @@ export const brtToranomonToKachidokiBusTimes: BusSchedule = ${formatSchedule(toK
     }
 }
 
-main().catch(err => {
-    console.error(err.message ?? err);
-    process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    main().catch(err => {
+        console.error(err.message ?? err);
+        process.exit(1);
+    });
+}
