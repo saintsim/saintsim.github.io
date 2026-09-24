@@ -1,10 +1,10 @@
 name: Update BRT timetable
 
-# Re-scrapes the Tokyo BRT timetables weekly (Monday 09:00 JST) and opens a PR when
+# Re-scrapes the Tokyo BRT timetables weekly (Sunday 09:00 JST, leaving the day to fix a failed run) and opens a PR when
 # they change. Run it sooner from the Actions tab with "Run workflow".
 on:
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 0'  # Sunday 00:00 UTC
   workflow_dispatch:
 
 permissions:
