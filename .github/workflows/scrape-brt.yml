@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Test scraper against saved pages
         run: npm test
@@ -45,7 +45,7 @@ jobs:
       - name: Compile
         if: steps.diff.outputs.changed == 'true'
         run: |
-          npm install
+          npm ci
           npx tsc
 
       - name: Open pull request
