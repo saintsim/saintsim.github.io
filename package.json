@@ -14,12 +14,10 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "css-loader": "^7.1.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.4"
   },
   "dependencies": {
-    "node-fetch": "^3.3.2",
     "openmeteo": "^1.2.3"
   }
 }
