@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
-        "moduleResolution": "node",  // Add this line
+        // "bundler" matches how Vite resolves the extensionless imports in src/
+        // (the old "node" setting was removed in TypeScript 7)
+        "moduleResolution": "bundler",
+        // rootDir must be explicit since TypeScript 6, and keeps built/ flat (built/bus.js, not built/src/bus.js)
+        "rootDir": "./src",
         "outDir": "./built",
         "allowJs": true,
         "module": "esnext",
