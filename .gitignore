@@ -4,9 +4,8 @@ node_modules/
 # Build output
 dist/
 
-# Editor directories
+# Editor directories (.idea/ is tracked on purpose and has its own .gitignore for per-machine files)
 .vscode/
-.idea/
 
 # OS files
 .DS_Store

@@ -1,16 +1,15 @@
 import { defineConfig } from 'vite'
 
-export default {
-    base: './', // This is important for GitHub Pages
+export default defineConfig({
+    base: './', // relative asset paths, so the site works when served from GitHub Pages
     build: {
-      minify: false, // remove after debug complete 
-      "target": "esnext",
+      minify: false, // left unminified for now so the deployed bundle is readable while debugging
+      target: 'esnext',
       outDir: 'dist',
-      rollupOptions: {
-        // Ensure proper handling of assets
+      rolldownOptions: {
         output: {
           assetFileNames: ({ name }) => {
-            // Keep images organized in the dist folder
+            // Keep images organised in their own folder in dist
             if (/\.(png|jpg|jpeg|gif|svg)$/.test(name ?? '')) {
               return 'assets/images/[name][extname]';
             }
@@ -20,4 +19,4 @@ export default {
       },
     },
     assetsInclude: ['**/*.png'],
-  }
+  })
