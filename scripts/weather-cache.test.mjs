@@ -5,9 +5,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { todayInZone, parseForecast, forecastDate, usableCache, describeHttpError } from '../built/weather-cache.js';
 
+const hours = value => Array(24).fill(value);
 const forecastBody = (date, overrides = {}) => JSON.stringify({
     current: { time: `${date}T15:00`, weather_code: 2, apparent_temperature: 12 },
-    hourly: { apparent_temperature: [12], precipitation_probability: [10], rain: [0], snowfall: [0], weathercode: [2] },
+    hourly: { apparent_temperature: hours(12), precipitation_probability: hours(10), rain: hours(0), snowfall: hours(0), weathercode: hours(2) },
     ...overrides,
 });
 const cache = (body, savedAt = '2026-11-15T03:00:00.000Z') => JSON.stringify({ savedAt, body });
@@ -27,6 +28,13 @@ test('a forecast missing a field the page draws is rejected', () => {
     assert.throws(() => parseForecast(forecastBody('2026-11-15', { hourly: undefined })), /missing hourly\.apparent_temperature/);
     assert.throws(() => parseForecast(JSON.stringify({ current: {} })), /missing current\.time/);
     assert.throws(() => parseForecast('<html>'), SyntaxError);
+});
+
+test('a forecast without every hour of the day is rejected', () => {
+    const hourly = { apparent_temperature: hours(12), precipitation_probability: hours(10), rain: hours(0), snowfall: hours(0), weathercode: hours(2) };
+    assert.throws(() => parseForecast(forecastBody('2026-11-15', { hourly: { ...hourly, rain: [] } })), /missing hourly\.rain/);
+    assert.throws(() => parseForecast(forecastBody('2026-11-15', { hourly: { ...hourly, apparent_temperature: hours(12).slice(1) } })),
+        /missing hourly\.apparent_temperature/);
 });
 
 test('the cache is used only for today\'s forecast', () => {

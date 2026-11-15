@@ -324,7 +324,7 @@ function renderForecast(body: string, fetchedAt: Date) {
         throw error;
     }
     shownForecast = { body: body, date: forecastDate(forecast), fetchedAt: fetchedAt };
-    setElementBlock("weatherLastUpdated", fetchedAt.toLocaleString());
+    setElementBlock("weatherLastUpdated", `${fetchedAt.toLocaleDateString()} ${formatTime(fetchedAt)}`);
 }
 
 async function fetchWeather(url: string): Promise<string> {

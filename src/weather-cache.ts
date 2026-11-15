@@ -9,6 +9,9 @@ export interface CachedWeather {
     body: string; // the raw open-meteo response
 }
 
+// The hourly fields hold one entry per hour of the day (forecast_days=1), indexed by hour.
+const HOURS_PER_DAY = 24;
+
 // The fields updatePage reads; anything missing would leave a half-drawn page.
 const REQUIRED_CURRENT_FIELDS = ["time", "weather_code", "apparent_temperature"];
 const REQUIRED_HOURLY_FIELDS = ["apparent_temperature", "precipitation_probability", "rain", "snowfall", "weathercode"];
@@ -18,12 +21,16 @@ export function todayInZone(now: Date, timeZone: string = FORECAST_TIME_ZONE): s
     return new Intl.DateTimeFormat("en-CA", { timeZone: timeZone }).format(now);
 }
 
+function hasEveryHour(values: unknown): boolean {
+    return Array.isArray(values) && values.length >= HOURS_PER_DAY;
+}
+
 // Parses an open-meteo response, throwing if it lacks a field the page needs.
 export function parseForecast(body: string): any {
     const forecast = JSON.parse(body);
     const missing = [
         ...REQUIRED_CURRENT_FIELDS.filter(field => forecast?.current?.[field] === undefined).map(field => `current.${field}`),
-        ...REQUIRED_HOURLY_FIELDS.filter(field => !Array.isArray(forecast?.hourly?.[field])).map(field => `hourly.${field}`),
+        ...REQUIRED_HOURLY_FIELDS.filter(field => !hasEveryHour(forecast?.hourly?.[field])).map(field => `hourly.${field}`),
     ];
     if (missing.length > 0) {
         throw new Error(`missing ${missing.join(", ")}`);
