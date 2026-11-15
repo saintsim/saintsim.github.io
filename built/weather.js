@@ -1,6 +1,7 @@
 import { weatherConfig } from './config';
 import { getWeatherImage, getWeatherDescription, getWorstWeatherCode, getUmbrellaIcon } from './weather-codes';
-import { updateOutfitOptions } from './outfit';
+import { updateOutfitOptions, resetOutfitOptions } from './outfit';
+import { FORECAST_TIME_ZONE, todayInZone, parseForecast, forecastDate, usableCache, describeHttpError } from './weather-cache';
 export const morningBlockName = "Morning";
 export const afternoonBlockName = "Afternoon";
 export const eveningBlockName = "Evening";
@@ -149,9 +150,13 @@ function updateChanceOfRainBlock() {
     const umbrellaIcon = "umbrellaIcon";
     document.getElementById(umbrellaIcon).src = getUmbrellaIcon(chanceOfRainPerc);
 }
-function updatePage(pageResponse) {
-    const response = JSON.parse(pageResponse);
-    console.log(response);
+// Draws a forecast already checked by parseForecast.
+function updatePage(response) {
+    // these accumulate across the day's blocks, so start each render afresh
+    chanceOfRainPerc = 0;
+    isUmbrellaNeeded = false;
+    rainTotalExpected = 0;
+    minTemperature = 100;
     const currentHour = new Date().getHours();
     const weatherCode = response.current.weather_code;
     updateCurrentBlock(response, weatherCode);
@@ -197,28 +202,23 @@ function getLatLong() {
         longitude: longitude
     };
 }
-const WEATHER_TIMEOUT_MS = 15000; // give up on a request that hangs (open-meteo sometimes stops answering)
-const REFRESH_INTERVAL_MS = 600000; // 10 mins between updates when the last one worked
-const RETRY_INTERVAL_MS = 60000; // 1 min between retries after a failure
+const MS_PER_MINUTE = 60 * 1000;
+const WEATHER_TIMEOUT_MS = 15 * 1000; // give up on a request that hangs (open-meteo sometimes stops answering)
+const REFRESH_INTERVAL_MS = 10 * MS_PER_MINUTE; // between updates when the last one worked
+const RETRY_INTERVAL_MS = 1 * MS_PER_MINUTE; // between retries after a failure
+const UPDATE_CHECK_INTERVAL_MS = 5 * 1000; // how often to check whether an update is due
 const CACHE_KEY_PREFIX = "weatherCache:";
+// The forecast parts of the page as first loaded, so a forecast can be wiped without reloading the page.
+const FORECAST_ELEMENT_IDS = ["currentIconBox", "currentTemperatureBox", "todayRainBox", "weather_box"];
+const blankForecastHtml = new Map(FORECAST_ELEMENT_IDS.map(id => [id, document.getElementById(id)?.innerHTML ?? ""]));
 let lastAttemptTime = new Date(0);
 let lastAttemptOk = false;
 let requestInFlight = false;
-let shownForecastDate = null; // YYYY-MM-DD of the forecast on screen
+let shownForecast = null; // the forecast on screen
 class WeatherFetchError extends Error {
 }
-function todayDateString() {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${now.getFullYear()}-${month}-${day}`;
-}
-function forecastDate(body) {
-    // current.time is local to the requested timezone, e.g. "2026-11-15T15:00"
-    return String(JSON.parse(body).current.time).slice(0, 10);
-}
 function formatTime(date) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 function showWeatherError(message) {
     const errorElement = document.getElementById("weatherError");
@@ -237,33 +237,57 @@ function saveToCache(body, savedAt) {
         // storage full or disabled (private browsing): carry on without a cache
     }
 }
-// The last good forecast for this city, but only if it is for today: an old day's forecast is worse than none.
 function loadTodaysCache() {
     try {
-        const raw = localStorage.getItem(CACHE_KEY_PREFIX + city);
-        if (!raw) {
-            return null;
-        }
-        const cached = JSON.parse(raw);
-        return forecastDate(cached.body) === todayDateString() ? cached : null;
+        return usableCache(localStorage.getItem(CACHE_KEY_PREFIX + city), todayInZone(new Date()));
     }
     catch {
-        return null;
+        return null; // storage disabled
     }
 }
-function renderForecast(body, updatedAt) {
-    updatePage(body);
-    shownForecastDate = forecastDate(body);
-    setElementBlock("weatherLastUpdated", updatedAt);
+// Puts the forecast parts of the page back as first loaded: blank, and with any hidden blocks shown again.
+function clearForecast() {
+    for (const [id, html] of blankForecastHtml) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerHTML = html;
+        }
+    }
+    resetOutfitOptions();
+    setElementBlock("weatherLastUpdated", "");
+    shownForecast = null;
+}
+// Draws a forecast from scratch. Throws if it cannot be drawn: before touching the page if the
+// forecast is incomplete, otherwise after clearing it, so a half-drawn forecast is never left on screen.
+function renderForecast(body, fetchedAt) {
+    const forecast = parseForecast(body);
+    clearForecast();
+    try {
+        updatePage(forecast);
+    }
+    catch (error) {
+        clearForecast(); // never leave a half-drawn forecast
+        throw error;
+    }
+    shownForecast = { body: body, date: forecastDate(forecast), fetchedAt: fetchedAt };
+    setElementBlock("weatherLastUpdated", fetchedAt.toLocaleString());
 }
 async function fetchWeather(url) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), WEATHER_TIMEOUT_MS);
-    let response;
     try {
-        response = await fetch(url, { signal: controller.signal });
+        // the timeout covers reading the body too: a server can send headers and then stall
+        const response = await fetch(url, { signal: controller.signal });
+        const body = await response.text();
+        if (!response.ok) {
+            throw new WeatherFetchError(describeHttpError(response.status, response.statusText, body));
+        }
+        return body;
     }
     catch (error) {
+        if (error instanceof WeatherFetchError) {
+            throw error;
+        }
         if (controller.signal.aborted) {
             throw new WeatherFetchError(`no response after ${WEATHER_TIMEOUT_MS / 1000}s (timed out)`);
         }
@@ -272,19 +296,6 @@ async function fetchWeather(url) {
     finally {
         clearTimeout(timer);
     }
-    const body = await response.text();
-    if (!response.ok) {
-        // open-meteo explains errors as {"error": true, "reason": "..."}
-        let reason = response.statusText;
-        try {
-            reason = JSON.parse(body).reason || reason;
-        }
-        catch {
-            // not JSON: keep the status text
-        }
-        throw new WeatherFetchError(`HTTP ${response.status}${reason ? `: ${reason}` : ""}`);
-    }
-    return body;
 }
 async function getWeatherData() {
     if (requestInFlight) {
@@ -295,16 +306,20 @@ async function getWeatherData() {
     const url = "https://api.open-meteo.com/v1/forecast?" +
         "latitude=" + cityLatLong.latitude +
         "&longitude=" + cityLatLong.longitude +
-        "&timezone=Asia%2FTokyo" +
+        "&timezone=" + encodeURIComponent(FORECAST_TIME_ZONE) +
         "&current=temperature_2m,apparent_temperature,is_day,precipitation,precipitation_probability,rain,showers,snowfall,weather_code" +
         "&forecast_days=1" +
         "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
     try {
         const body = await fetchWeather(url);
+        const previous = shownForecast;
         try {
             renderForecast(body, lastAttemptTime);
         }
         catch (error) {
+            if (previous) {
+                renderForecast(previous.body, previous.fetchedAt); // keep the last good forecast on screen
+            }
             throw new WeatherFetchError(`unexpected response (${error instanceof Error ? error.message : error})`);
         }
         saveToCache(body, lastAttemptTime);
@@ -313,7 +328,7 @@ async function getWeatherData() {
     }
     catch (error) {
         lastAttemptOk = false;
-        const reason = error instanceof WeatherFetchError ? error.message : String(error);
+        const reason = error instanceof WeatherFetchError ? error.message : `unexpected error (${error})`;
         console.log(`Failed to fetch weather data: ${reason}`);
         handleFailure(reason);
     }
@@ -321,30 +336,27 @@ async function getWeatherData() {
         requestInFlight = false;
     }
 }
+// After a failed update: keep today's forecast on screen, fall back to today's cached one, or show nothing.
 function handleFailure(reason) {
-    const today = todayDateString();
-    let note = `retrying every ${RETRY_INTERVAL_MS / 60000} min`;
-    if (shownForecastDate !== today) {
+    let note = `retrying every ${RETRY_INTERVAL_MS / MS_PER_MINUTE} min`;
+    if (shownForecast?.date !== todayInZone(new Date())) {
+        clearForecast(); // an old day's forecast is worse than none
         const cached = loadTodaysCache();
         if (cached) {
             try {
                 renderForecast(cached.body, new Date(cached.savedAt));
-                note = `showing the forecast saved at ${formatTime(new Date(cached.savedAt))}; ${note}`;
             }
             catch {
-                // a cache we cannot render is no use
+                // a cache we cannot draw is no use: stay blank
             }
         }
-        else if (shownForecastDate !== null) {
-            // yesterday's forecast is still on screen and nothing newer is available: start afresh rather than show it
-            window.location.reload();
-            return;
-        }
+    }
+    if (shownForecast) {
+        note = `showing the forecast from ${formatTime(shownForecast.fetchedAt)}; ${note}`;
     }
     showWeatherError(`Weather update failed at ${formatTime(lastAttemptTime)}: ${reason} (${note})`);
 }
 function checkIfWeatherNeedsAnUpdate() {
-    // if not updated for 10mins (or 1min after a failure), update
     const interval = lastAttemptOk ? REFRESH_INTERVAL_MS : RETRY_INTERVAL_MS;
     if ((new Date().getTime() - lastAttemptTime.getTime()) > interval) {
         getWeatherData();
@@ -369,4 +381,4 @@ if (refreshButton) {
 }
 getCityFromUrlParams();
 getWeatherData();
-setInterval(checkIfWeatherNeedsAnUpdate, 5000); // refresh every 5 seconds (5000)
+setInterval(checkIfWeatherNeedsAnUpdate, UPDATE_CHECK_INTERVAL_MS);

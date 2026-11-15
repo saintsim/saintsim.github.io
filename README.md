@@ -2,7 +2,7 @@
 
 Weather app using Open Meteo API (https://open-meteo.com/). It uses TypeScript and Vite as the build tool.
 
-If a weather update fails (HTTP error such as 403/429, timeout after 15s, or network error), the reason is shown in red in the footer and it retries every minute. Meanwhile it shows the last good forecast saved in the browser (`localStorage`), but only if that forecast is for today.
+If a weather update fails (an HTTP error such as 403/429 with open-meteo's reason, no response within 15s, a network error, or a response missing fields the page needs), the reason is shown in red in the footer and the update is retried every minute. Each good forecast is saved in the browser (`localStorage`); after a failure the page keeps today's forecast on screen, or falls back to the saved one, but never shows a forecast for an earlier day: "today" is the date in Tokyo, which every city on the page shares.
 
 It is deployed to GitHub pages using GitHub actions with a custom action to first deploy to gh-pages.
 
@@ -29,7 +29,8 @@ It needs *Settings → Actions → General → Allow GitHub Actions to create an
 // scrape and rewrite src/bus-schedule.ts (then run `npx tsc`)
 npm run scrape:brt
 
-// test the scraper against saved copies of the stop pages (scripts/fixtures/)
+// test the scraper against saved copies of the stop pages (scripts/fixtures/),
+// and the weather cache helpers in built/weather-cache.js (run `npx tsc` first)
 npm test
 ```
 

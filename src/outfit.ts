@@ -67,3 +67,11 @@ export function updateOutfitOptions(minTemeperature: number, chanceOfRainPerc: n
 
     setOutfitColour(outfitShorts, outfitTrousers, outfitJumper, outfitLightJacket, outfitBigCoat, outfitScarf, outfitHatGloves, outfitUmbrella);
 }
+
+// Back to the page's initial look, with no outfit picked, for when no forecast is shown.
+export function resetOutfitOptions() {
+    for (const id of ["outfit-shorts", "outfit-trousers", "outfit-jumper", "outfit-light-jacket",
+                      "outfit-big-coat", "outfit-scarf", "outfit-hat-gloves", "outfit-umbrella"]) {
+        setElementTextColour(id, "");
+    }
+}

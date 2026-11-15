@@ -257,6 +257,7 @@ hr.weather-divide {
 
 .error-txt {
     color: #FF9B9B;
+    font-size: smaller;
 }
 
 .transparent-button {
