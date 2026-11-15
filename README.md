@@ -2,6 +2,8 @@
 
 Weather app using Open Meteo API (https://open-meteo.com/). It uses TypeScript and Vite as the build tool.
 
+If a weather update fails (HTTP error such as 403/429, timeout after 15s, or network error), the reason is shown in red in the footer and it retries every minute. Meanwhile it shows the last good forecast saved in the browser (`localStorage`), but only if that forecast is for today.
+
 It is deployed to GitHub pages using GitHub actions with a custom action to first deploy to gh-pages.
 
 # Build/Run Steps

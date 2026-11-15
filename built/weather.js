@@ -8,7 +8,6 @@ export let chanceOfRainPerc = 0;
 export let isUmbrellaNeeded = false;
 export let rainTotalExpected = 0;
 export let minTemperature = 100;
-let lastUpdatedTime;
 let city;
 let cityLatLong;
 function getHours(blockName) {
@@ -198,7 +197,101 @@ function getLatLong() {
         longitude: longitude
     };
 }
-function getWeatherData() {
+const WEATHER_TIMEOUT_MS = 15000; // give up on a request that hangs (open-meteo sometimes stops answering)
+const REFRESH_INTERVAL_MS = 600000; // 10 mins between updates when the last one worked
+const RETRY_INTERVAL_MS = 60000; // 1 min between retries after a failure
+const CACHE_KEY_PREFIX = "weatherCache:";
+let lastAttemptTime = new Date(0);
+let lastAttemptOk = false;
+let requestInFlight = false;
+let shownForecastDate = null; // YYYY-MM-DD of the forecast on screen
+class WeatherFetchError extends Error {
+}
+function todayDateString() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${now.getFullYear()}-${month}-${day}`;
+}
+function forecastDate(body) {
+    // current.time is local to the requested timezone, e.g. "2026-11-15T15:00"
+    return String(JSON.parse(body).current.time).slice(0, 10);
+}
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+function showWeatherError(message) {
+    const errorElement = document.getElementById("weatherError");
+    if (!errorElement) {
+        return;
+    }
+    errorElement.textContent = message ?? "";
+    errorElement.hidden = message === null;
+}
+function saveToCache(body, savedAt) {
+    try {
+        const cached = { savedAt: savedAt.toISOString(), body: body };
+        localStorage.setItem(CACHE_KEY_PREFIX + city, JSON.stringify(cached));
+    }
+    catch {
+        // storage full or disabled (private browsing): carry on without a cache
+    }
+}
+// The last good forecast for this city, but only if it is for today: an old day's forecast is worse than none.
+function loadTodaysCache() {
+    try {
+        const raw = localStorage.getItem(CACHE_KEY_PREFIX + city);
+        if (!raw) {
+            return null;
+        }
+        const cached = JSON.parse(raw);
+        return forecastDate(cached.body) === todayDateString() ? cached : null;
+    }
+    catch {
+        return null;
+    }
+}
+function renderForecast(body, updatedAt) {
+    updatePage(body);
+    shownForecastDate = forecastDate(body);
+    setElementBlock("weatherLastUpdated", updatedAt);
+}
+async function fetchWeather(url) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), WEATHER_TIMEOUT_MS);
+    let response;
+    try {
+        response = await fetch(url, { signal: controller.signal });
+    }
+    catch (error) {
+        if (controller.signal.aborted) {
+            throw new WeatherFetchError(`no response after ${WEATHER_TIMEOUT_MS / 1000}s (timed out)`);
+        }
+        throw new WeatherFetchError(`network error (${error instanceof Error ? error.message : error})`);
+    }
+    finally {
+        clearTimeout(timer);
+    }
+    const body = await response.text();
+    if (!response.ok) {
+        // open-meteo explains errors as {"error": true, "reason": "..."}
+        let reason = response.statusText;
+        try {
+            reason = JSON.parse(body).reason || reason;
+        }
+        catch {
+            // not JSON: keep the status text
+        }
+        throw new WeatherFetchError(`HTTP ${response.status}${reason ? `: ${reason}` : ""}`);
+    }
+    return body;
+}
+async function getWeatherData() {
+    if (requestInFlight) {
+        return;
+    }
+    requestInFlight = true;
+    lastAttemptTime = new Date();
     const url = "https://api.open-meteo.com/v1/forecast?" +
         "latitude=" + cityLatLong.latitude +
         "&longitude=" + cityLatLong.longitude +
@@ -206,30 +299,54 @@ function getWeatherData() {
         "&current=temperature_2m,apparent_temperature,is_day,precipitation,precipitation_probability,rain,showers,snowfall,weather_code" +
         "&forecast_days=1" +
         "&hourly=temperature_2m,weathercode,apparent_temperature,precipitation_probability,precipitation,rain,showers,snowfall,snow_depth";
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
+    try {
+        const body = await fetchWeather(url);
+        try {
+            renderForecast(body, lastAttemptTime);
+        }
+        catch (error) {
+            throw new WeatherFetchError(`unexpected response (${error instanceof Error ? error.message : error})`);
+        }
+        saveToCache(body, lastAttemptTime);
+        lastAttemptOk = true;
+        showWeatherError(null);
+    }
+    catch (error) {
+        lastAttemptOk = false;
+        const reason = error instanceof WeatherFetchError ? error.message : String(error);
+        console.log(`Failed to fetch weather data: ${reason}`);
+        handleFailure(reason);
+    }
+    finally {
+        requestInFlight = false;
+    }
+}
+function handleFailure(reason) {
+    const today = todayDateString();
+    let note = `retrying every ${RETRY_INTERVAL_MS / 60000} min`;
+    if (shownForecastDate !== today) {
+        const cached = loadTodaysCache();
+        if (cached) {
             try {
-                updatePage(xhr.responseText);
+                renderForecast(cached.body, new Date(cached.savedAt));
+                note = `showing the forecast saved at ${formatTime(new Date(cached.savedAt))}; ${note}`;
             }
-            catch (error) {
-                console.log("Failed to parse the weather data.");
-            }
-        }
-        else {
-            if (xhr.status !== 200) {
-                console.log(`Failed to fetch weather data: ${xhr.status} / ${xhr.readyState}`);
+            catch {
+                // a cache we cannot render is no use
             }
         }
-    };
-    xhr.send();
-    lastUpdatedTime = new Date();
-    setElementBlock("weatherLastUpdated", lastUpdatedTime);
+        else if (shownForecastDate !== null) {
+            // yesterday's forecast is still on screen and nothing newer is available: start afresh rather than show it
+            window.location.reload();
+            return;
+        }
+    }
+    showWeatherError(`Weather update failed at ${formatTime(lastAttemptTime)}: ${reason} (${note})`);
 }
 function checkIfWeatherNeedsAnUpdate() {
-    // if not updated for 10mins, update
-    if ((new Date().getTime() - lastUpdatedTime.getTime()) > 600000) {
+    // if not updated for 10mins (or 1min after a failure), update
+    const interval = lastAttemptOk ? REFRESH_INTERVAL_MS : RETRY_INTERVAL_MS;
+    if ((new Date().getTime() - lastAttemptTime.getTime()) > interval) {
         getWeatherData();
     }
 }
