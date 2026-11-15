@@ -255,6 +255,11 @@ hr.weather-divide {
     clear: both;
 }
 
+.error-txt {
+    color: #FF9B9B;
+    font-size: smaller;
+}
+
 .transparent-button {
     background-color: transparent;
     border: 1px solid #293C53;

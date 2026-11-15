@@ -8,17 +8,12 @@ function setElementTextColour(id: string, data: any) {
 const activeColour = '#ffffff';
 const inactiveColour = '#4E78A5';
 
-function setOutfitColour(outfitShorts: string, outfitTrousers: string, outfitJumper: string,
-                        outfitLightJacket: string, outfitBigCoat: string, outfitScarf: string,
-                        outfitHatGloves: string, outfitUmbrella: string) {
-    setElementTextColour("outfit-shorts", outfitShorts);
-    setElementTextColour("outfit-trousers", outfitTrousers);
-    setElementTextColour("outfit-jumper", outfitJumper);
-    setElementTextColour("outfit-light-jacket", outfitLightJacket);
-    setElementTextColour("outfit-big-coat", outfitBigCoat);
-    setElementTextColour("outfit-scarf", outfitScarf);
-    setElementTextColour("outfit-hat-gloves", outfitHatGloves);
-    setElementTextColour("outfit-umbrella", outfitUmbrella);
+// In the order setOutfitColour takes their colours.
+const OUTFIT_ELEMENT_IDS = ["outfit-shorts", "outfit-trousers", "outfit-jumper", "outfit-light-jacket",
+                            "outfit-big-coat", "outfit-scarf", "outfit-hat-gloves", "outfit-umbrella"];
+
+function setOutfitColour(...colours: string[]) {
+    OUTFIT_ELEMENT_IDS.forEach((id, index) => setElementTextColour(id, colours[index]));
 }
 
 export function updateOutfitOptions(minTemeperature: number, chanceOfRainPerc: number) {
@@ -66,4 +61,9 @@ export function updateOutfitOptions(minTemeperature: number, chanceOfRainPerc: n
     }
 
     setOutfitColour(outfitShorts, outfitTrousers, outfitJumper, outfitLightJacket, outfitBigCoat, outfitScarf, outfitHatGloves, outfitUmbrella);
+}
+
+// Back to the page's initial look, with no outfit picked, for when no forecast is shown.
+export function resetOutfitOptions() {
+    OUTFIT_ELEMENT_IDS.forEach(id => setElementTextColour(id, ""));
 }
